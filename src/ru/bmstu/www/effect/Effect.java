@@ -1,4 +1,4 @@
-package ru.bmstu.www.effects;
+package ru.bmstu.www.effect;
 
 
 

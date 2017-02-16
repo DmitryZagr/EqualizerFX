@@ -1,8 +1,8 @@
-package ru.bmstu.www.effects;
+package ru.bmstu.www.effects.impl;
 
+import ru.bmstu.www.effect.Effect;
 
-
-public class Delay extends Effect{
+public class Delay extends Effect {
 	
 	private int delay;
 	private int maxD = 25000;

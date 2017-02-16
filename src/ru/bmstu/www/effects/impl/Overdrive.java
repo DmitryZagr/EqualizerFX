@@ -1,6 +1,8 @@
-package ru.bmstu.www.effects;
+package ru.bmstu.www.effects.impl;
 
-public class Overdrive extends ru.bmstu.www.effects.Effect {
+import ru.bmstu.www.effect.Effect;
+
+public class Overdrive extends Effect {
 
 	private short maxAmplitude;
 	private short minAmplitude;
@@ -20,7 +22,7 @@ public class Overdrive extends ru.bmstu.www.effects.Effect {
 	@Override
 	public synchronized short[] createEffect() {
 		this.setMaxAndMinAmpl();
-		for(int i = 0; i < this.inputAudioStream.length; i ++) {
+		for(int i = 0; i < this.inputAudioStream.length; i++) {
 		if(this.inputAudioStream[i] > this.maxAmplitude)
 				this.inputAudioStream[i] = (this.maxAmplitude);
 			else if(this.inputAudioStream[i] < this.minAmplitude)
