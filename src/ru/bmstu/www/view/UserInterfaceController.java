@@ -22,8 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
-import ru.bmstu.www.player.AudioPlayer;;
+import ru.bmstu.www.player.impl.AudioPlayer;
+import javafx.stage.Stage;;
 
 /**
  * FXML Controller class
@@ -112,9 +112,13 @@ public class UserInterfaceController implements Initializable {
         if(selectedFile == null) return;
         
         this.audioPlayer = new AudioPlayer(selectedFile);  
-        playThread = new Thread(()->{
-        	this.audioPlayer.play();
-        });
+        
+//        playThread = new Thread(()->{
+//        	this.audioPlayer.play();
+//        });
+        
+        playThread = new Thread(this.audioPlayer);
+        
         playThread.start();
         
         System.out.println("PLAY");
@@ -125,8 +129,8 @@ public class UserInterfaceController implements Initializable {
     private void clickStopPlay() {
     	if(this.audioPlayer != null) {
     		if(!this.audioPlayer.getPause())
-    			this.audioPlayer.setPause(true);
-    		else this.audioPlayer.setPause(false);
+    			this.audioPlayer.pause();
+    		else this.audioPlayer.resume();
     	}	
     	
     }
@@ -302,11 +306,8 @@ public class UserInterfaceController implements Initializable {
     @FXML
     private void clickClose() {
     	if(this.audioPlayer != null) {
-    		if(this.playThread != null)
-        		this.playThread.interrupt();
     		this.audioPlayer.getEqualizer().close();
-    		this.audioPlayer.close();
-    		
+    		this.audioPlayer.stop();    		
     	}
     	
     	System.exit(0);

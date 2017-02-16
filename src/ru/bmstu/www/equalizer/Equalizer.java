@@ -83,6 +83,8 @@ public class Equalizer {
 									fs[6].get()[i] ;
 //									fs[7].get()[i] +
 //									fs[8].get()[i] ;
+			
+//			System.err.print(this.outputSignal[i] + " ");
 		}
 	}
 	
@@ -91,12 +93,6 @@ public class Equalizer {
 	}
 	
 	public short[] getOutputSignal() {
-		try {
-			Thread.sleep(33);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return this.outputSignal;
 	}
 	
