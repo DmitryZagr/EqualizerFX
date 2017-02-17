@@ -57,13 +57,13 @@ public class AudioPlayer implements IAudioPlayer {
 		this.sourceDataLine = readFile.getSourceDataLine();
 		this.ais = readFile.getAudioInputStream();
 		this.buff = new byte[this.BUFF_SIZE];
-		this.sampleBuff = new short[BUFF_SIZE >>> 1];
+		this.sampleBuff = new short[BUFF_SIZE / 2];
 		this.delay = new Delay();
 		this.overdrive = new Overdrive();
 		this.isDelay = false;
 		this.isOverdrive = false;
 		this.overdriveCoef = 1.0;
-		this.equalizer = new Equalizer(BUFF_SIZE >>> 1);
+		this.equalizer = new Equalizer(BUFF_SIZE / 2);
 		AudioFileFormat aff = new AudioFileFormat();
 		format = new AudioFormat((float) aff.getSampleRate(), aff.getBits(), aff.getChannels(), aff.isSigned(),
 				aff.isBigEndian());

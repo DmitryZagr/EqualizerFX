@@ -16,7 +16,8 @@ public class Equalizer {
 	private static int COUNT_OF_THREADS = 2;
 	private final int lenghtOfInputSignal;
 	private ExecutorService pool;
-	private Future<short[]>[] futureTask; 
+	private Future<double[]>[] futureTask; 
+	private static double NORMALIZE = 0.1;
 	
 	public Equalizer(final int lenghtOfInputSignal) {
 		
@@ -38,20 +39,8 @@ public class Equalizer {
 	public void setInputSignal(short[] inputSignal) {
 		this.inputSignal = inputSignal;
 		this.outputSignal = new short[this.lenghtOfInputSignal];
-		this.filters[0].settings(FilterInfo.CoefsOfBand_0, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[1].settings(FilterInfo.CoefsOfBand_1, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[2].settings(FilterInfo.CoefsOfBand_2, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[3].settings(FilterInfo.CoefsOfBand_3, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[4].settings(FilterInfo.CoefsOfBand_4, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[5].settings(FilterInfo.CoefsOfBand_5, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
-		this.filters[6].settings(FilterInfo.CoefsOfBand_6, 
-				FilterInfo.COUNT_OF_COEFS, this.inputSignal);
+		for(Filter filter : this.filters)
+			filter.setInputSignal(inputSignal);
 	}
 	
 	
@@ -59,13 +48,10 @@ public class Equalizer {
 		
 		this.filters = new  Filter [Equalizer.COUNT_OF_BANDS];
 		
-		this.filters[0] = new Filter(this.lenghtOfInputSignal);
-		this.filters[1] = new Filter(this.lenghtOfInputSignal);
-		this.filters[2] = new Filter(this.lenghtOfInputSignal);
-		this.filters[3] = new Filter(this.lenghtOfInputSignal);
-		this.filters[4] = new Filter(this.lenghtOfInputSignal);
-		this.filters[5] = new Filter(this.lenghtOfInputSignal);
-		this.filters[6] = new Filter(this.lenghtOfInputSignal);
+		for(int i = 0; i < filters.length; i++) {
+			this.filters[i] = Filter.settings(FilterInfo.CoefsOfBands[i], 
+					FilterInfo.COUNT_OF_COEFS, this.lenghtOfInputSignal).build();
+		}
 	}
 	
 	public void equalization() throws InterruptedException, ExecutionException {
@@ -74,14 +60,16 @@ public class Equalizer {
 			futureTask[i] = pool.submit(this.filters[i]);
 		}
 		
+		double sum = 0.0;
+		
 		for(int i = 0; i < this.outputSignal.length; i++) {
-			this.outputSignal[i] += futureTask[0].get()[i] +
-									futureTask[1].get()[i] +
-									futureTask[2].get()[i] +
-									futureTask[3].get()[i] +
-									futureTask[4].get()[i] +
-									futureTask[5].get()[i] +
-									futureTask[6].get()[i] ;
+			for(Future<double[]> task : futureTask) {
+				sum += task.get()[i];
+				sum *= NORMALIZE;
+				this.outputSignal[i] += sum;
+			}
+				
+			sum = 0.0;
 		}
 	}
 	

@@ -1,47 +1,50 @@
 package ru.bmstu.www.filter;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 import ru.bmstu.www.filter.coefs.FilterInfo;
 
-public class Filter implements Callable<short[]>  {
+public class Filter implements Callable<double[]>  {
 	
 	protected int countOfCoefs;
 	protected double[] coefsFilter;
 	protected short[] inputSignal;
-	protected short[] outputSignal;
+	protected double[] outputSignal;
 	protected double gain;
 	
-	public Filter(final int lenghtOfInputSignal){
+	private Filter(final double[] coefsFilter, final int countOfCoefs, int lenghtOfInputSignal){
 		gain = 1.0;
-		this.outputSignal = new short[lenghtOfInputSignal /*+ FilterInfo.COUNT_OF_COEFS*/];
-//		this.outputSignal = new short[inputSignal.length + countOfCoefs];
-	}
-	
-//	public Filter(double[] coefsFilter, int countOfCoefs, short[] inputSignal) {
-//	}
-	
-	public void settings(final double[] coefsFilter, final int countOfCoefs, final short[] inputSignal) {
-		this.inputSignal = inputSignal;
 		this.coefsFilter =  coefsFilter;
 		this.countOfCoefs = countOfCoefs;
-		this.outputSignal = new short[inputSignal.length /*+ countOfCoefs*/];
+		this.outputSignal = new double[lenghtOfInputSignal /*+ countOfCoefs*/];
+	}
+		
+	public static Filter settings(final double[] coefsFilter, final int countOfCoefs, int lenghtOfInputSignal) {
+		return new Filter(coefsFilter, countOfCoefs, lenghtOfInputSignal);
 	}
 	
-	private short[] svertka() {
+	public Filter build() {
+		return this;
+	}
+	
+	private double[] svertka() {
 		double multiplication;
-//		System.out.println(this.inputSignal.length);
+		
+		Arrays.fill(this.outputSignal, 0);
+		
 		for(int i = 0; i <  inputSignal.length - FilterInfo.COUNT_OF_COEFS; i++) {
 			for(int j = 0; j < this.countOfCoefs; j++) {
 				
 				multiplication =   (double)this.inputSignal[i] * this.coefsFilter[j];
-				if(gain == 1.0) 
-					this.outputSignal[i + j] += 0.1 * (short)(multiplication ); 
-				else 
-					this.outputSignal[i + j] += 0.13  * gain * (short)(multiplication );
+				this.outputSignal[i + j] += multiplication * gain; 
 			}	
 		}
 		return this.outputSignal;
+	}
+	
+	public void setInputSignal(short[] inputSignal) {
+		this.inputSignal = inputSignal;
 	}
 
 	public void setGain(float d) {
@@ -52,7 +55,7 @@ public class Filter implements Callable<short[]>  {
 		return this.gain;
 	}
 	
-	public short[] getOutputSignal() {
+	public double[] getOutputSignal() {
 		return this.outputSignal;
 	}
 	
@@ -61,7 +64,7 @@ public class Filter implements Callable<short[]>  {
 	}
 
 	@Override
-	public short[] call() throws Exception {
+	public double[] call() throws Exception {
 		this.svertka();
 		return this.outputSignal;
 	}
