@@ -23,7 +23,7 @@ public class AudioPlayer implements IAudioPlayer {
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
 	private byte[] buff;
-	private final int BUFF_SIZE = 1024 / 1 / 1 + ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
+	private final int BUFF_SIZE = 1024 + ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
 	// private final int BUFF_SIZE = 20480 +
 	// ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
 	// 20101
@@ -38,18 +38,17 @@ public class AudioPlayer implements IAudioPlayer {
 	private boolean isOverdrive;
 
 	private Equalizer equalizer;
-	
+
 	private volatile boolean paused;
 	private volatile boolean running;
 	private final Object pauseLock = new Object();
-	
+
 	private AudioFormat format;
 	private FFT fastFourierInput;
 	private FFT fastFourierOutput;
 	private boolean FFTready = false;
 	private short[] prevSignal;
-	
-	
+
 	public AudioPlayer(File musicFile)
 			throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
 		ReadMusicFile readFile = new ReadMusicFile(musicFile);
@@ -184,9 +183,9 @@ public class AudioPlayer implements IAudioPlayer {
 			this.running = true;
 			while ((this.ais.read(this.buff, 0, this.BUFF_SIZE)) != -1 && running) {
 
-				if(!this.sync())
+				if (!this.sync())
 					break;
-				
+
 				this.sampleBuff = this.ByteArrayToSamplesArray();
 
 				FFTready = false;
@@ -208,7 +207,7 @@ public class AudioPlayer implements IAudioPlayer {
 				FFTready = true;
 
 				this.buff = this.SampleArrayByteArray();
-				sourceDataLine.write(this.buff, 0, this.buff.length - 1 );
+				sourceDataLine.write(this.buff, 0, this.buff.length - 1);
 			}
 			this.FFTready = false;
 			this.sourceDataLine.drain();
@@ -217,28 +216,28 @@ public class AudioPlayer implements IAudioPlayer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
+
 	}
-	
-	@Override
-	public void pause() {
-        // you may want to throw an IllegalStateException if !running
-        paused = true;
-    }
 
 	@Override
-    public void resume() {
-        synchronized (pauseLock) {
-            paused = false;
-            pauseLock.notifyAll(); // Unblocks thread
-        }
-    }
-    
+	public void pause() {
+		// you may want to throw an IllegalStateException if !running
+		paused = true;
+	}
+
 	@Override
-    public void stop() {
-        running = false;
-        
-        if (this.ais != null)
+	public void resume() {
+		synchronized (pauseLock) {
+			paused = false;
+			pauseLock.notifyAll(); // Unblocks thread
+		}
+	}
+
+	@Override
+	public void stop() {
+		running = false;
+
+		if (this.ais != null)
 			try {
 				this.ais.close();
 			} catch (IOException e) {
@@ -247,36 +246,39 @@ public class AudioPlayer implements IAudioPlayer {
 			}
 		if (this.sourceDataLine != null)
 			this.sourceDataLine.close();
-        
-        // you might also want to do this:
-        Thread.currentThread().interrupt();
-    }
-    
-    
-	
+
+		// you might also want to do this:
+		Thread.currentThread().interrupt();
+	}
+
 	private boolean sync() {
 		synchronized (pauseLock) {
-            if (!running) { // may have changed while waiting to
-                            // synchronize on pauseLock
-                return false;
-            }
-            if (paused) {
-                try {
-                    pauseLock.wait(); // will cause this Thread to block until 
-                                      // another thread calls pauseLock.notifyAll()
-                                      // Note that calling wait() will 
-                                      // relinquish the synchronized lock that this 
-                                      // thread holds on pauseLock so another thread
-                                      // can acquire the lock to call notifyAll()
-                                      // (link with explanation below this code)
-                } catch (InterruptedException ex) {
-                	return false;
-                }
-                if (!running) { // running might have changed since we paused
-                	return false;
-                }
-            }
-        }
+			if (!running) { // may have changed while waiting to
+							// synchronize on pauseLock
+				return false;
+			}
+			if (paused) {
+				try {
+					pauseLock.wait(); // will cause this Thread to block until
+										// another thread calls
+										// pauseLock.notifyAll()
+										// Note that calling wait() will
+										// relinquish the synchronized lock that
+										// this
+										// thread holds on pauseLock so another
+										// thread
+										// can acquire the lock to call
+										// notifyAll()
+										// (link with explanation below this
+										// code)
+				} catch (InterruptedException ex) {
+					return false;
+				}
+				if (!running) { // running might have changed since we paused
+					return false;
+				}
+			}
+		}
 		return true;
 	}
 
