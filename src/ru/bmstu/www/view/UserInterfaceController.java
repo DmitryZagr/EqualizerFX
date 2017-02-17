@@ -111,6 +111,9 @@ public class UserInterfaceController implements Initializable {
 
 		if (selectedFile == null)
 			return;
+		
+		if(this.audioPlayer != null)
+			this.audioPlayer.stop();
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
 
