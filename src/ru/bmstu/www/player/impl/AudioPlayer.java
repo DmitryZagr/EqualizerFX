@@ -3,6 +3,7 @@ package ru.bmstu.www.player.impl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Observable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -18,7 +19,7 @@ import ru.bmstu.www.input.AudioFileFormat;
 import ru.bmstu.www.input.ReadMusicFile;
 import ru.bmstu.www.player.IAudioPlayer;
 
-public class AudioPlayer implements IAudioPlayer {
+public class AudioPlayer extends Observable implements IAudioPlayer {
 	private double volume;
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
@@ -205,6 +206,9 @@ public class AudioPlayer implements IAudioPlayer {
 				this.fastFourierOutput.fft(this.sampleBuff);
 
 				FFTready = true;
+				
+				setChanged();
+			    notifyObservers();
 
 				this.buff = this.SampleArrayByteArray();
 				sourceDataLine.write(this.buff, 0, this.buff.length - 1);

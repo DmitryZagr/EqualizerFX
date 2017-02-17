@@ -3,6 +3,8 @@ package ru.bmstu.www.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.ResourceBundle;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -58,6 +60,8 @@ public class UserInterfaceController implements Initializable {
 	private Thread playThread, graphThread;
 
 	private int countOfPointsOnPlot = 512;
+	
+	private GraphListener graphListener = new GraphListener();
 
 	/**
 	 * Initializes the controller class.
@@ -118,6 +122,8 @@ public class UserInterfaceController implements Initializable {
 		this.audioPlayer = new AudioPlayer(selectedFile);
 
 		playThread = new Thread(this.audioPlayer);
+		
+		this.audioPlayer.addObserver(graphListener);
 
 		playThread.start();
 
@@ -289,37 +295,20 @@ public class UserInterfaceController implements Initializable {
 			this.graphFlag = true;
 		} else
 			this.graphFlag = false;
+	}
+	
+	private class GraphListener implements Observer {
 
-		this.graphThread = new Thread(() -> {
-			while (this.graphFlag) {
-				if (this.graphFlag == false)
-					for (;;) {
-						try {
-							if (this.graphFlag == true)
-								break;
-							this.graphThread.sleep(150);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				if (this.audioPlayer.getFftReady()) {
-					for (int j = 0; j < this.audioPlayer.getFTvlOutput().length; j += 1) {
-						this.series2Data[j].setYValue(Math.log10(this.audioPlayer.getFTvlInput()[j] * 0.1) / 10);
-						this.series1Data[j].setYValue(Math.log10(this.audioPlayer.getFTvlOutput()[j]) / 10);
+		  @Override
+		  public void update(Observable o, Object arg) {
+			  if (audioPlayer.getFftReady() && graphFlag) {
+					for (int j = 0; j < audioPlayer.getFTvlOutput().length; j += 1) {
+						series2Data[j].setYValue(Math.log10(audioPlayer.getFTvlInput()[j] * 0.1) / 10);
+						series1Data[j].setYValue(Math.log10(audioPlayer.getFTvlOutput()[j]) / 10);
 					}
 				}
-				try {
-					this.graphThread.sleep(90);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		});
-
-		this.graphThread.start();
+		  }
+		
 	}
 
 }
