@@ -29,14 +29,14 @@ public class Filter implements Callable<short[]>  {
 	}
 	
 	private short[] svertka() {
-		int multiplication;
+		double multiplication;
 //		System.out.println(this.inputSignal.length);
 		for(int i = 0; i <  inputSignal.length - FilterInfo.COUNT_OF_COEFS; i++) {
 			for(int j = 0; j < this.countOfCoefs; j++) {
 				
-				multiplication =  (int) (this.inputSignal[i] * this.coefsFilter[j]);
+				multiplication =   (double)this.inputSignal[i] * this.coefsFilter[j];
 				if(gain == 1.0) 
-					this.outputSignal[i + j] += 0.145 * (short)(multiplication ); 
+					this.outputSignal[i + j] += 0.1 * (short)(multiplication ); 
 				else 
 					this.outputSignal[i + j] += 0.13  * gain * (short)(multiplication );
 			}	
