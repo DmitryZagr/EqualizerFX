@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import java.net.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
@@ -230,7 +231,7 @@
     </center>
     
     <bottom>
-        <LineChart fx:id="graph" maxHeight="330"  >
+        <LineChart fx:id="graph" maxHeight="350"  >
             <xAxis>
                 <NumberAxis label="Frequency, 110 * Hz" lowerBound="0" upperBound="44100" fx:id="xAxis" />
             </xAxis>
@@ -239,6 +240,8 @@
             </yAxis>
         </LineChart>
     </bottom>
+    
+
     
 </BorderPane>
 

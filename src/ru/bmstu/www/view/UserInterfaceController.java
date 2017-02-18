@@ -59,7 +59,7 @@ public class UserInterfaceController implements Initializable {
 	private AudioPlayer audioPlayer;
 	private Thread playThread, graphThread;
 
-	private int countOfPointsOnPlot = 512;
+	private int countOfPointsOnPlot = 128;
 	
 	private GraphListener graphListener = new GraphListener();
 
@@ -80,7 +80,7 @@ public class UserInterfaceController implements Initializable {
 		series2.setName("Оригинал");
 		series1Data = new XYChart.Data[this.countOfPointsOnPlot]; // 256
 		series2Data = new XYChart.Data[this.countOfPointsOnPlot];
-		System.out.println(this.series1Data.length);
+		
 		for (int i = 0; i < series1Data.length; i++) {
 			series1Data[i] = new XYChart.Data<>(i, 0);
 			series1.getData().add(series1Data[i]);
@@ -96,7 +96,10 @@ public class UserInterfaceController implements Initializable {
 		graph.setData(lineChartData);
 		graph.createSymbolsProperty();
 		graph.setAnimated(false);
+		this.graph.setCreateSymbols(false);
 		this.graph.getYAxis();
+		this.graph.setCache(true);
+		
 		this.yAxis.setLowerBound(-0.2);
 		this.yAxis.setUpperBound(0.3);
 		this.yAxis.setAnimated(false);
@@ -302,9 +305,9 @@ public class UserInterfaceController implements Initializable {
 		  @Override
 		  public void update(Observable o, Object arg) {
 			  if (audioPlayer.getFftReady() && graphFlag) {
-					for (int j = 0; j < audioPlayer.getFTvlOutput().length; j += 1) {
-						series2Data[j].setYValue(Math.log10(audioPlayer.getFTvlInput()[j] * 0.1) / 10);
-						series1Data[j].setYValue(Math.log10(audioPlayer.getFTvlOutput()[j]) / 10);
+					for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
+						series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i] * 0.1) / 10);
+						series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i]) / 10);
 					}
 				}
 		  }

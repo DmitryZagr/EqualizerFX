@@ -13,7 +13,7 @@ public class FFT {
 		this.AVal = inputSignal;
 		// this.Nvl = this.AVal.length;
 		// должно быть равно количеству точек на графике.
-		this.Nvl = 512;
+		this.Nvl = 128;
 		this.Nft = this.Nvl;
 		this.FTvl = new double[this.Nft];
 
