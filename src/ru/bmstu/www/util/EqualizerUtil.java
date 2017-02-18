@@ -13,16 +13,24 @@ public class EqualizerUtil {
 
 		Integer serialNumber = null;
 
-		Scanner s = new Scanner(stringWithSerialNumber).useDelimiter("[^0-9]+");
+		Scanner scanner = new Scanner(stringWithSerialNumber);
 
-		if (s.hasNext())
-			serialNumber = s.nextInt();
+		scanner.useDelimiter("[^0-9]+");
 
-		if (s.hasNext())
+		if (scanner.hasNext())
+			serialNumber = scanner.nextInt();
+
+		if (scanner.hasNext()) {
+			scanner.close();
 			throw new EqualizerExceptions.IncorrectArgumet("More than one number in Slider id");
+		}
 
-		if (serialNumber == null)
+		if (serialNumber == null) {
+			scanner.close();
 			throw new EqualizerExceptions.IncorrectArgumet("Slider id does not contain number id");
+		}
+
+		scanner.close();
 
 		return serialNumber;
 	}

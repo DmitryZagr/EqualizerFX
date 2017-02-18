@@ -16,9 +16,10 @@ public class Equalizer {
 	private static int COUNT_OF_THREADS = 2;
 	private final int lenghtOfInputSignal;
 	private ExecutorService pool;
-	private Future<double[]>[] futureTask;
+	private Future<double[]>[] futureTasks;
 	private static double NORMALIZE = 0.1;
 
+	@SuppressWarnings("unchecked")
 	public Equalizer(final int lenghtOfInputSignal) {
 
 		COUNT_OF_THREADS = Runtime.getRuntime().availableProcessors();
@@ -29,7 +30,8 @@ public class Equalizer {
 		if (Equalizer.COUNT_OF_THREADS > Equalizer.COUNT_OF_BANDS)
 			Equalizer.COUNT_OF_THREADS = Equalizer.COUNT_OF_BANDS;
 
-		this.futureTask = new Future[Equalizer.COUNT_OF_BANDS];
+		
+		this.futureTasks = new Future[Equalizer.COUNT_OF_BANDS];
 
 		this.pool = Executors.newFixedThreadPool(COUNT_OF_THREADS);
 		this.lenghtOfInputSignal = lenghtOfInputSignal;
@@ -40,7 +42,7 @@ public class Equalizer {
 		this.inputSignal = inputSignal;
 		this.outputSignal = new short[this.lenghtOfInputSignal];
 		for (Filter filter : this.filters)
-			filter.setInputSignal(inputSignal);
+			filter.setInputSignal(this.inputSignal);
 	}
 
 	private void createFilters() {
@@ -56,13 +58,13 @@ public class Equalizer {
 	public void equalization() throws InterruptedException, ExecutionException {
 
 		for (int i = 0; i < Equalizer.COUNT_OF_BANDS; i++) {
-			futureTask[i] = pool.submit(this.filters[i]);
+			futureTasks[i] = pool.submit(this.filters[i]);
 		}
 
 		double sum = 0.0;
 
 		for (int i = 0; i < this.outputSignal.length; i++) {
-			for (Future<double[]> task : futureTask) {
+			for (Future<double[]> task : futureTasks) {
 				sum += task.get()[i];
 				sum *= NORMALIZE;
 				this.outputSignal[i] += sum;

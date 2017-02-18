@@ -3,7 +3,6 @@ package ru.bmstu.www.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class UserInterfaceController implements Initializable {
 			overdriveSlider, delaySlider;
 
 	@FXML
-	private LineChart graph;
+	private LineChart<Integer, Number> graph;
 
 	@FXML
 	private NumberAxis xAxis, yAxis;
@@ -59,11 +58,11 @@ public class UserInterfaceController implements Initializable {
 
 	private boolean graphFlag = false;
 
-	private XYChart.Data[] series1Data;
-	private XYChart.Data[] series2Data;
+	private XYChart.Data<Integer, Number>[] series1Data;
+	private XYChart.Data<Integer, Number>[] series2Data;
 
 	private AudioPlayer audioPlayer;
-	private Thread playThread, graphThread;
+	private Thread playThread;
 
 	private int countOfPointsOnPlot = 128;
 
@@ -77,6 +76,7 @@ public class UserInterfaceController implements Initializable {
 	 * @param url
 	 * @param rb
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 
