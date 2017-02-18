@@ -1,4 +1,4 @@
-package ru.bmstu.www.view;
+package ru.bmstu.www;
 
 import java.io.IOException;
 
@@ -18,11 +18,11 @@ public class EqualizerApp extends Application {
 	@Override
 	public void start(Stage stage) throws IOException {
 
-		Parent root = FXMLLoader.load(getClass().getResource("UserInterface.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/fxml/UserInterface.fxml"));
 
 		Scene scene = new Scene(root);
 
-		String url = getClass().getClassLoader().getResource("Chart.css").toExternalForm();
+		String url = getClass().getClassLoader().getResource("css/Chart.css").toExternalForm();
 		scene.getStylesheets().add(url);
 
 		stage.setScene(scene);
