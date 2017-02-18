@@ -72,8 +72,12 @@ public class Equalizer {
 		}
 	}
 
-	public Filter getFilter(short nF) {
+	public Filter getFilter(int nF) {
 		return this.filters[nF];
+	}
+	
+	public Filter[] getFilters() {
+		return this.filters;
 	}
 
 	public short[] getOutputSignal() {

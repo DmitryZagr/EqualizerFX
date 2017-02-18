@@ -3,6 +3,11 @@ package ru.bmstu.www.view;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -25,6 +30,7 @@ import javafx.scene.control.Slider;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import ru.bmstu.www.player.impl.AudioPlayer;
+import ru.bmstu.www.util.EqualizerUtil;
 import javafx.stage.Stage;;
 
 /**
@@ -60,8 +66,10 @@ public class UserInterfaceController implements Initializable {
 	private Thread playThread, graphThread;
 
 	private int countOfPointsOnPlot = 128;
-	
+
 	private GraphListener graphListener = new GraphListener();
+
+	private Map<Slider, Label> equalizerSliderToLabel = new HashMap<>();
 
 	/**
 	 * Initializes the controller class.
@@ -72,7 +80,9 @@ public class UserInterfaceController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 
-		this.labelInitialize();
+		this.initializeEqualizerElements();
+		this.initializeEffectElements();
+
 		XYChart.Series<Integer, Number> series1 = new XYChart.Series<>();
 		XYChart.Series<Integer, Number> series2 = new XYChart.Series<>();
 		series1.setName("Модифицированный");
@@ -80,7 +90,7 @@ public class UserInterfaceController implements Initializable {
 		series2.setName("Оригинал");
 		series1Data = new XYChart.Data[this.countOfPointsOnPlot]; // 256
 		series2Data = new XYChart.Data[this.countOfPointsOnPlot];
-		
+
 		for (int i = 0; i < series1Data.length; i++) {
 			series1Data[i] = new XYChart.Data<>(i, 0);
 			series1.getData().add(series1Data[i]);
@@ -88,6 +98,7 @@ public class UserInterfaceController implements Initializable {
 			series2Data[i] = new XYChart.Data<>(i, 0);
 			series2.getData().add(series2Data[i]);
 		}
+
 		ObservableList<XYChart.Series<Integer, Number>> lineChartData = FXCollections.observableArrayList();
 
 		lineChartData.add(series1);
@@ -99,7 +110,7 @@ public class UserInterfaceController implements Initializable {
 		this.graph.setCreateSymbols(false);
 		this.graph.getYAxis();
 		this.graph.setCache(true);
-		
+
 		this.yAxis.setLowerBound(-0.2);
 		this.yAxis.setUpperBound(0.3);
 		this.yAxis.setAnimated(false);
@@ -118,20 +129,17 @@ public class UserInterfaceController implements Initializable {
 
 		if (selectedFile == null)
 			return;
-		
-		if(this.audioPlayer != null)
+
+		if (this.audioPlayer != null)
 			this.audioPlayer.stop();
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
 
 		playThread = new Thread(this.audioPlayer);
-		
+
 		this.audioPlayer.addObserver(graphListener);
 
 		playThread.start();
-
-		System.out.println("PLAY");
-
 	}
 
 	@FXML
@@ -149,85 +157,48 @@ public class UserInterfaceController implements Initializable {
 	private void clickReset() {
 		if (this.audioPlayer == null)
 			return;
-		Slider_0.setValue(1.0);
-		Slider_1.setValue(1.0);
-		Slider_2.setValue(1.0);
-		Slider_3.setValue(1.0);
-		Slider_4.setValue(1.0);
-		Slider_5.setValue(1.0);
-		Slider_6.setValue(1.0);
+
+		Iterator<Entry<Slider, Label>> iter = equalizerSliderToLabel.entrySet().iterator();
+
+		while (iter.hasNext()) {
+			iter.next().getKey().setValue(1.0);
+		}
+
 		soundSlider.setValue(0.65);
 		this.overdriveSlider.setValue(1.0);
 		this.delaySlider.setValue(1.0);
 
 	}
 
-	// Listen for Slider value changes
-	private void labelInitialize() {
+	private void initializeEqualizerElements() {
 
-		Slider_0.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_0.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 0).setGain((float) newValue.doubleValue());
+		this.equalizerSliderToLabel.put(Slider_0, labelForSlider_0);
+		this.equalizerSliderToLabel.put(Slider_1, labelForSlider_1);
+		this.equalizerSliderToLabel.put(Slider_2, labelForSlider_2);
+		this.equalizerSliderToLabel.put(Slider_3, labelForSlider_3);
+		this.equalizerSliderToLabel.put(Slider_4, labelForSlider_4);
+		this.equalizerSliderToLabel.put(Slider_5, labelForSlider_5);
+		this.equalizerSliderToLabel.put(Slider_6, labelForSlider_6);
 
-			}
-		});
+		Iterator<Entry<Slider, Label>> iter = equalizerSliderToLabel.entrySet().iterator();
 
-		Slider_1.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_1.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 1).setGain((float) newValue.doubleValue());
-			}
-		});
+		while (iter.hasNext()) {
 
-		Slider_2.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_2.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 2).setGain((float) newValue.doubleValue());
-			}
-		});
+			Entry<Slider, Label> sliderToLabel = iter.next();
 
-		Slider_3.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_3.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 3).setGain((float) newValue.doubleValue());
-			}
-		});
+			sliderToLabel.getKey().valueProperty().addListener(new ChangeListener<Number>() {
+				@Override
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					String str = String.format("%.1f", (newValue.doubleValue()));
+					sliderToLabel.getValue().setText(str);
+					int filterID = EqualizerUtil.getSerialNumber(sliderToLabel.getKey().idProperty().getValue());
+					audioPlayer.getEqualizer().getFilter(filterID).setGain((float) newValue.doubleValue());
+				}
+			});
+		}
+	}
 
-		Slider_4.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_4.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 4).setGain((float) newValue.doubleValue());
-			}
-		});
-
-		Slider_5.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_5.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 5).setGain((float) newValue.doubleValue());
-			}
-		});
-
-		Slider_6.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				String str = String.format("%.1f", (newValue.doubleValue()));
-				labelForSlider_6.setText(str);
-				audioPlayer.getEqualizer().getFilter((short) 6).setGain((float) newValue.doubleValue());
-			}
-		});
+	private void initializeEffectElements() {
 
 		overdriveSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -243,7 +214,6 @@ public class UserInterfaceController implements Initializable {
 				audioPlayer.setDelayCoef(newValue.doubleValue());
 			}
 		});
-
 	}
 
 	private void checkBoxInnitial() {
@@ -266,7 +236,6 @@ public class UserInterfaceController implements Initializable {
 
 	@FXML
 	private void createDelay() {
-		System.out.println("Delay");
 		if (!this.audioPlayer.delayIsActive())
 			this.audioPlayer.setDelay(true);
 		else
@@ -275,7 +244,6 @@ public class UserInterfaceController implements Initializable {
 
 	@FXML
 	private void createOverdrive() {
-		System.out.println("Overdrive");
 		if (!this.audioPlayer.overdriveIsActive())
 			this.audioPlayer.setOverdrive(true);
 		else
@@ -299,19 +267,19 @@ public class UserInterfaceController implements Initializable {
 		} else
 			this.graphFlag = false;
 	}
-	
+
 	private class GraphListener implements Observer {
 
-		  @Override
-		  public void update(Observable o, Object arg) {
-			  if (audioPlayer.getFftReady() && graphFlag) {
-					for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
-						series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i] * 0.1) / 10);
-						series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i]) / 10);
-					}
+		@Override
+		public void update(Observable o, Object arg) {
+			if (audioPlayer.getFftReady() && graphFlag) {
+				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
+					series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i] * 0.1) / 10);
+					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i]) / 10);
 				}
-		  }
-		
+			}
+		}
+
 	}
 
 }
