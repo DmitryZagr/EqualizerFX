@@ -176,13 +176,12 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		try {
 			this.sourceDataLine.open(this.format);
 			this.sourceDataLine.start();
 			this.paused = false;
 			this.running = true;
-			while ((this.ais.read(this.buff, 0, this.BUFF_SIZE)) != -1 && running) {
+			while ((this.ais.read(this.buff, 0, this.BUFF_SIZE) != -1) && running ) {
 
 				if (!this.sync())
 					break;
@@ -217,8 +216,8 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 			this.sourceDataLine.drain();
 			this.sourceDataLine.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(running)
+				e.printStackTrace();
 		}
 
 	}
