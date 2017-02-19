@@ -20,7 +20,7 @@
 				<groupId>com.zenjava</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>ru.bmstu.www.EqualizerApp</mainClass>
+					<mainClass>ru.bmstu.www.app.EqualizerApp</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
