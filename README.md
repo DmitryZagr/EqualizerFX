@@ -1,6 +1,6 @@
 # EqualizerFX
 
-Equalizer based [JavaFX 8](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm).
+Equalizer based on [JavaFX 8](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm).
 
 
 # New Features!
