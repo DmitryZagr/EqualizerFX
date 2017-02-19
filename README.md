@@ -1,6 +1,6 @@
 # EqualizerFX
 
-JavaFX based Equalizer.
+Equalizer based JavaFX.
 
 
 # New Features!

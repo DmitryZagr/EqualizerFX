@@ -1,4 +1,4 @@
-package ru.bmstu.www;
+package ru.bmstu.www.app;
 
 import java.io.IOException;
 
