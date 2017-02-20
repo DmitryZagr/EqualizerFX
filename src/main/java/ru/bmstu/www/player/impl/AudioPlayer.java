@@ -25,7 +25,11 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
 	private byte[] buff;
-	private final int BUFF_SIZE = 1024 + ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
+	private final int BUFF_SIZE = 1024 /*
+										 * +
+										 * ru.bmstu.www.filter.coefs.FilterInfo.
+										 * COUNT_OF_COEFS
+										 */;
 
 	private short[] sampleBuff;
 
@@ -68,7 +72,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		this.volume = 0.3;
 		this.fastFourierInput = new FFT();
 		this.fastFourierOutput = new FFT();
-		this.prevSignal = new short[ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS - 1];
+		this.prevSignal = new short[ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS];
 	}
 
 	private void delay(short[] inputSamples) {
@@ -228,7 +232,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 				notifyObservers();
 
 				this.buff = this.SampleArrayByteArray();
-				sourceDataLine.write(this.buff, 0, this.buff.length - 1);
+				sourceDataLine.write(this.buff, 0, this.buff.length);
 			}
 			this.FFTready = false;
 			this.sourceDataLine.drain();
