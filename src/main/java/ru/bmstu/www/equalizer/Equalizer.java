@@ -30,7 +30,6 @@ public class Equalizer {
 		if (Equalizer.COUNT_OF_THREADS > Equalizer.COUNT_OF_BANDS)
 			Equalizer.COUNT_OF_THREADS = Equalizer.COUNT_OF_BANDS;
 
-		
 		this.futureTasks = new Future[Equalizer.COUNT_OF_BANDS];
 
 		this.pool = Executors.newFixedThreadPool(COUNT_OF_THREADS);
@@ -67,8 +66,14 @@ public class Equalizer {
 			for (Future<double[]> task : futureTasks) {
 				sum += task.get()[i];
 				sum *= NORMALIZE;
+				// if (max < sum)
+				// max = sum;
 				this.outputSignal[i] += sum;
+				// System.out.println(this.outputSignal[i]);
 			}
+
+			// if (max > Short.MAX_VALUE)
+			// System.err.println(max);
 
 			sum = 0.0;
 		}
@@ -77,7 +82,7 @@ public class Equalizer {
 	public Filter getFilter(int nF) {
 		return this.filters[nF];
 	}
-	
+
 	public Filter[] getFilters() {
 		return this.filters;
 	}

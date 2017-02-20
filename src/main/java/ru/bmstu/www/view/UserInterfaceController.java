@@ -114,8 +114,7 @@ public class UserInterfaceController implements Initializable {
 		this.yAxis.setLowerBound(-0.2);
 		this.yAxis.setUpperBound(0.3);
 		this.yAxis.setAnimated(false);
-
-		this.checkBoxInnitial();
+		
 		this.volumeFromSlider();
 	}
 
@@ -130,8 +129,13 @@ public class UserInterfaceController implements Initializable {
 		if (selectedFile == null)
 			return;
 
-		if (this.audioPlayer != null)
+		if (this.audioPlayer != null) {
+			this.audioPlayer.deleteObserver(graphListener);
 			this.audioPlayer.stop();
+			this.audioPlayer = null;
+		}
+		
+		this.clickReset();
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
 
@@ -164,10 +168,15 @@ public class UserInterfaceController implements Initializable {
 			iter.next().getKey().setValue(1.0);
 		}
 
-		soundSlider.setValue(0.65);
+		if (this.audioPlayer != null)
+			this.audioPlayer.resetToDefault();
+		
+		this.delayCheck.setSelected(false);
+		this.overdriveCheck.setSelected(false);
+
+		soundSlider.setValue(0.3);
 		this.overdriveSlider.setValue(1.0);
 		this.delaySlider.setValue(1.0);
-
 	}
 
 	private void initializeEqualizerElements() {
@@ -216,15 +225,6 @@ public class UserInterfaceController implements Initializable {
 		});
 	}
 
-	private void checkBoxInnitial() {
-		this.delayCheck = new CheckBox();
-		this.delayCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-			}
-		});
-	}
-
 	private void volumeFromSlider() {
 		soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -236,18 +236,14 @@ public class UserInterfaceController implements Initializable {
 
 	@FXML
 	private void createDelay() {
-		if (!this.audioPlayer.delayIsActive())
-			this.audioPlayer.setDelay(true);
-		else
-			this.audioPlayer.setDelay(false);
+		if (this.audioPlayer != null)
+			this.audioPlayer.setDelay(this.delayCheck.isSelected());
 	}
 
 	@FXML
 	private void createOverdrive() {
-		if (!this.audioPlayer.overdriveIsActive())
-			this.audioPlayer.setOverdrive(true);
-		else
-			this.audioPlayer.setOverdrive(false);
+		if (this.audioPlayer != null)
+			this.audioPlayer.setOverdrive(this.overdriveCheck.isSelected());
 	}
 
 	@FXML
@@ -274,8 +270,8 @@ public class UserInterfaceController implements Initializable {
 		public void update(Observable o, Object arg) {
 			if (audioPlayer.getFftReady() && graphFlag) {
 				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
-					series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i] * 0.1) / 10);
-					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i]) / 10);
+					series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i]) / 10);
+					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i] * 20 ) / 10);
 				}
 			}
 		}

@@ -27,7 +27,7 @@ public class EqualizerApp extends Application {
 
 		stage.setScene(scene);
 		stage.setWidth(900);
-		stage.setHeight(580);
+		stage.setHeight(605);
 		stage.setResizable(false);
 
 		stage.setOnCloseRequest(e -> {

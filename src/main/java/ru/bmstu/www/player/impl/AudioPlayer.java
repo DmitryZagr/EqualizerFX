@@ -15,6 +15,7 @@ import ru.bmstu.www.effects.impl.Delay;
 import ru.bmstu.www.effects.impl.Overdrive;
 import ru.bmstu.www.equalizer.Equalizer;
 import ru.bmstu.www.fft.FFT;
+import ru.bmstu.www.filter.coefs.FilterInfo;
 import ru.bmstu.www.input.AudioFileFormat;
 import ru.bmstu.www.input.ReadMusicFile;
 import ru.bmstu.www.player.IAudioPlayer;
@@ -25,9 +26,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private AudioInputStream ais;
 	private byte[] buff;
 	private final int BUFF_SIZE = 1024 + ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
-	// private final int BUFF_SIZE = 20480 +
-	// ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS;
-	// 20101
 
 	private short[] sampleBuff;
 
@@ -67,7 +65,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		AudioFileFormat aff = new AudioFileFormat();
 		format = new AudioFormat((float) aff.getSampleRate(), aff.getBits(), aff.getChannels(), aff.isSigned(),
 				aff.isBigEndian());
-		this.volume = 1.0;
+		this.volume = 0.3;
 		this.fastFourierInput = new FFT();
 		this.fastFourierOutput = new FFT();
 		this.prevSignal = new short[ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS - 1];
@@ -130,29 +128,42 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	private short[] ByteArrayToSamplesArray() {
 		for (int i = 0, j = 0; i < this.buff.length - 1; i += 2, j++) {
-			this.sampleBuff[j] = (short) (0.5
-					* (ByteBuffer.wrap(this.buff, i, 2).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort())
-					* this.getVolume());
+			this.sampleBuff[j] = (short) ((ByteBuffer.wrap(this.buff, i, 2).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+					.getShort()) * this.volume);
 		}
 		return this.sampleBuff;
 	}
 
 	private byte[] SampleArrayByteArray() {
-		int flagOfPrevSignal1 = ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS - 1;
+		int flagOfPrevSignal1 = FilterInfo.COUNT_OF_COEFS - 1;
+		boolean sumPrevSignalAndCurrent = true;
 		for (int i = 0, j = 0, p = 0; i < this.sampleBuff.length
 				&& j < (this.buff.length/*
 										 * this.BUFF_SIZE +
 										 * ru.bmstu.www.filter.coefs.FilterInfo.
 										 * COUNT_OF_COEFS - 1
-										 */); i++, j += 2, p++) {
-			if (p < flagOfPrevSignal1) {
+										 */); i++, j += 2) {
+			if (sumPrevSignalAndCurrent && p < flagOfPrevSignal1) {
 				this.sampleBuff[i] += this.prevSignal[p];
+				p++;
+			} else {
+				sumPrevSignalAndCurrent = false;
 			}
+
+			// if(this.sampleBuff.length - i <= FilterInfo.COUNT_OF_COEFS - 1) {
+			// this.prevSignal[p]
+			// p++;
+			// }
 
 			this.buff[j] = (byte) (this.sampleBuff[i]);
 			this.buff[j + 1] = (byte) (this.sampleBuff[i] >>> 8);
-
 		}
+
+		// for(int i = this.sampleBuff.length - FilterInfo.COUNT_OF_COEFS, p =
+		// 0; i < this.sampleBuff.length - 1; i++) {
+		// this.prevSignal[p] = this.sampleBuff[i];
+		// p++;
+		// }
 
 		return buff;
 
@@ -174,6 +185,13 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		return this.FFTready;
 	}
 
+	public void resetToDefault() {
+		this.isDelay = false;
+		this.isOverdrive = false;
+		this.overdriveCoef = 1.0;
+		this.volume = 0.3;
+	}
+
 	@Override
 	public void run() {
 		try {
@@ -181,7 +199,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 			this.sourceDataLine.start();
 			this.paused = false;
 			this.running = true;
-			while ((this.ais.read(this.buff, 0, this.BUFF_SIZE) != -1) && running ) {
+			while ((this.ais.read(this.buff, 0, this.BUFF_SIZE) != -1) && running) {
 
 				if (!this.sync())
 					break;
@@ -205,9 +223,9 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 				this.fastFourierOutput.fft(this.sampleBuff);
 
 				FFTready = true;
-				
+
 				setChanged();
-			    notifyObservers();
+				notifyObservers();
 
 				this.buff = this.SampleArrayByteArray();
 				sourceDataLine.write(this.buff, 0, this.buff.length - 1);
@@ -216,7 +234,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 			this.sourceDataLine.drain();
 			this.sourceDataLine.close();
 		} catch (Exception e) {
-			if(running)
+			if (running)
 				e.printStackTrace();
 		}
 
