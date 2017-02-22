@@ -24,7 +24,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
 	private byte[] buff;
-	private final int BUFF_SIZE = 32768;
+	private final int BUFF_SIZE = 1024;
 	private short[] sampleBuff;
 
 	private Delay delay;
