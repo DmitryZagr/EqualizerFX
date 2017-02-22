@@ -180,16 +180,16 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 				FFTready = false;
 				this.fastFourierInput.fft(this.sampleBuff);
 
+				equalizer.setInputSignal(this.sampleBuff);
+				this.equalizer.equalization();
+				this.sampleBuff = equalizer.getOutputSignal();
+				
 				if (this.isDelay)
 					this.delay(this.sampleBuff);
 
 				if (this.isOverdrive) {
 					this.overdrive(sampleBuff);
 				}
-
-				equalizer.setInputSignal(this.sampleBuff);
-				this.equalizer.equalization();
-				this.sampleBuff = equalizer.getOutputSignal();
 
 				this.fastFourierOutput.fft(this.sampleBuff);
 

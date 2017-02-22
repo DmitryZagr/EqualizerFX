@@ -1,28 +1,24 @@
 package ru.bmstu.www.filter;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.concurrent.Callable;
 
 public class Filter implements Callable<double[]> {
 
-	protected int countOfCoefs;
 	protected double[] coefsFilter;
 	protected short[] inputSignal;
 	protected double[] outputSignal;
 	protected double gain;
 	protected short[] buff;
 
-	private Filter(final double[] coefsFilter, final int countOfCoefs, int lenghtOfInputSignal) {
+	private Filter(final double[] coefsFilter, int lenghtOfInputSignal) {
 		gain = 1.0;
 		this.coefsFilter = coefsFilter;
-		this.countOfCoefs = countOfCoefs;
 		this.outputSignal = new double[lenghtOfInputSignal];
 		this.buff = new short[(this.coefsFilter.length)];
 	}
 
-	public static Filter settings(final double[] coefsFilter, final int countOfCoefs, int lenghtOfInputSignal) {
-		return new Filter(coefsFilter, countOfCoefs, lenghtOfInputSignal);
+	public static Filter settings(final double[] coefsFilter, int lenghtOfInputSignal) {
+		return new Filter(coefsFilter, lenghtOfInputSignal);
 	}
 
 	public Filter build() {
@@ -33,13 +29,12 @@ public class Filter implements Callable<double[]> {
 
 		for (int i = 0; i < inputSignal.length; i++) {
 			this.outputSignal[i] = 0.0;
-			
+
 			System.arraycopy(this.buff, 1, this.buff, 0, buff.length - 1);
 			this.buff[buff.length - 1] = this.inputSignal[i];
-			
-			for (int j = 0; j < this.countOfCoefs - 1; j++) {
-//				if (i - j >= 0)
-					this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j] * gain;
+
+			for (int j = 0; j < this.coefsFilter.length - 1; j++) {
+				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j] * gain;
 			}
 		}
 

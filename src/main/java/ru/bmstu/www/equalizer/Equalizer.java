@@ -12,28 +12,30 @@ public class Equalizer {
 	private short[] inputSignal;
 	private short[] outputSignal;
 	private Filter[] filters;
-	private final static int COUNT_OF_BANDS = 7;
-	private static int COUNT_OF_THREADS = 2;
+	private final int COUNT_OF_BANDS = 7;
+	private int COUNT_OF_THREADS = 2;
 	private final int lenghtOfInputSignal;
 	private ExecutorService pool;
 	private Future<double[]>[] futureTasks;
-	private static double NORMALIZE = 0.1;
+	private static final double NORMALIZE = 0.1;
 
 	@SuppressWarnings("unchecked")
 	public Equalizer(final int lenghtOfInputSignal) {
 
 		COUNT_OF_THREADS = Runtime.getRuntime().availableProcessors();
 
-		if (Equalizer.COUNT_OF_THREADS == 1)
-			Equalizer.COUNT_OF_THREADS = 2;
+		if (COUNT_OF_THREADS == 1)
+			COUNT_OF_THREADS = 2;
+		else if (COUNT_OF_THREADS > COUNT_OF_BANDS)
+			COUNT_OF_THREADS = COUNT_OF_BANDS;
+		else
+			COUNT_OF_THREADS = 3;
 
-		if (Equalizer.COUNT_OF_THREADS > Equalizer.COUNT_OF_BANDS)
-			Equalizer.COUNT_OF_THREADS = Equalizer.COUNT_OF_BANDS;
-
-		this.futureTasks = new Future[Equalizer.COUNT_OF_BANDS];
+		this.futureTasks = new Future[COUNT_OF_BANDS];
 
 		this.pool = Executors.newFixedThreadPool(COUNT_OF_THREADS);
 		this.lenghtOfInputSignal = lenghtOfInputSignal;
+		this.outputSignal = new short[this.lenghtOfInputSignal];
 		this.createFilters();
 	}
 
@@ -46,17 +48,16 @@ public class Equalizer {
 
 	private void createFilters() {
 
-		this.filters = new Filter[Equalizer.COUNT_OF_BANDS];
+		this.filters = new Filter[COUNT_OF_BANDS];
 
 		for (int i = 0; i < filters.length; i++) {
-			this.filters[i] = Filter
-					.settings(FilterInfo.CoefsOfBands[i], FilterInfo.COUNT_OF_COEFS, this.lenghtOfInputSignal).build();
+			this.filters[i] = Filter.settings(FilterInfo.CoefsOfBands[i], this.lenghtOfInputSignal).build();
 		}
 	}
 
 	public void equalization() throws InterruptedException, ExecutionException {
 
-		for (int i = 0; i < Equalizer.COUNT_OF_BANDS; i++) {
+		for (int i = 0; i < COUNT_OF_BANDS; i++) {
 			futureTasks[i] = pool.submit(this.filters[i]);
 		}
 

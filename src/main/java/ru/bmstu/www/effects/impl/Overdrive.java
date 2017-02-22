@@ -2,7 +2,7 @@ package ru.bmstu.www.effects.impl;
 
 import ru.bmstu.www.effect.Effect;
 
-public class Overdrive extends Effect {
+public final class Overdrive extends Effect {
 
 	private short maxAmplitude;
 	private short minAmplitude;
@@ -13,10 +13,6 @@ public class Overdrive extends Effect {
 	public Overdrive() {
 		super();
 		this.coef = 0.7;
-	}
-
-	public void setInputSampleStream(short[] inputAudioStream) {
-		this.inputAudioStream = inputAudioStream;
 	}
 
 	@Override
@@ -39,10 +35,4 @@ public class Overdrive extends Effect {
 	public void setOverdriveCoef(double coef) {
 		this.coef = coef;
 	}
-
-	@Override
-	public synchronized short[] getOutputAudioStream() {
-		return this.inputAudioStream;
-	}
-
 }

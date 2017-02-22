@@ -2,7 +2,7 @@ package ru.bmstu.www.effects.impl;
 
 import ru.bmstu.www.effect.Effect;
 
-public class Delay extends Effect {
+public final class Delay extends Effect {
 
 	private int delay;
 	private int maxD = 25000;
@@ -12,10 +12,6 @@ public class Delay extends Effect {
 	public Delay() {
 		super();
 		this.delay = 17000;
-	}
-
-	public void setInputSampleStream(short[] inputAudioStream) {
-		this.inputAudioStream = inputAudioStream;
 	}
 
 	@Override
@@ -49,11 +45,6 @@ public class Delay extends Effect {
 			this.delay = this.maxD;
 		if (this.delay < this.minD)
 			this.delay = this.minD;
-	}
-
-	@Override
-	public synchronized short[] getOutputAudioStream() {
-		return this.inputAudioStream;
 	}
 
 }
