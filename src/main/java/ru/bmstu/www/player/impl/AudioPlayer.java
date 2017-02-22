@@ -15,7 +15,6 @@ import ru.bmstu.www.effects.impl.Delay;
 import ru.bmstu.www.effects.impl.Overdrive;
 import ru.bmstu.www.equalizer.Equalizer;
 import ru.bmstu.www.fft.FFT;
-import ru.bmstu.www.filter.coefs.FilterInfo;
 import ru.bmstu.www.input.AudioFileFormat;
 import ru.bmstu.www.input.ReadMusicFile;
 import ru.bmstu.www.player.IAudioPlayer;
@@ -25,12 +24,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
 	private byte[] buff;
-	private final int BUFF_SIZE = 1024 /*
-										 * +
-										 * ru.bmstu.www.filter.coefs.FilterInfo.
-										 * COUNT_OF_COEFS
-										 */;
-
+	private final int BUFF_SIZE = 32768;
 	private short[] sampleBuff;
 
 	private Delay delay;
@@ -50,7 +44,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private FFT fastFourierInput;
 	private FFT fastFourierOutput;
 	private boolean FFTready = false;
-	private short[] prevSignal;
 
 	public AudioPlayer(File musicFile)
 			throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
@@ -72,7 +65,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		this.volume = 0.3;
 		this.fastFourierInput = new FFT();
 		this.fastFourierOutput = new FFT();
-		this.prevSignal = new short[ru.bmstu.www.filter.coefs.FilterInfo.COUNT_OF_COEFS];
 	}
 
 	private void delay(short[] inputSamples) {
@@ -133,41 +125,16 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private short[] ByteArrayToSamplesArray() {
 		for (int i = 0, j = 0; i < this.buff.length - 1; i += 2, j++) {
 			this.sampleBuff[j] = (short) ((ByteBuffer.wrap(this.buff, i, 2).order(java.nio.ByteOrder.LITTLE_ENDIAN)
-					.getShort()) * this.volume);
+					.getShort()));
 		}
 		return this.sampleBuff;
 	}
 
 	private byte[] SampleArrayByteArray() {
-		int flagOfPrevSignal1 = FilterInfo.COUNT_OF_COEFS - 1;
-		boolean sumPrevSignalAndCurrent = true;
-		for (int i = 0, j = 0, p = 0; i < this.sampleBuff.length
-				&& j < (this.buff.length/*
-										 * this.BUFF_SIZE +
-										 * ru.bmstu.www.filter.coefs.FilterInfo.
-										 * COUNT_OF_COEFS - 1
-										 */); i++, j += 2) {
-			if (sumPrevSignalAndCurrent && p < flagOfPrevSignal1) {
-				this.sampleBuff[i] += this.prevSignal[p];
-				p++;
-			} else {
-				sumPrevSignalAndCurrent = false;
-			}
-
-			// if(this.sampleBuff.length - i <= FilterInfo.COUNT_OF_COEFS - 1) {
-			// this.prevSignal[p]
-			// p++;
-			// }
-
+		for (int i = 0, j = 0; i < this.sampleBuff.length && j < this.buff.length; i++, j += 2) {
 			this.buff[j] = (byte) (this.sampleBuff[i]);
 			this.buff[j + 1] = (byte) (this.sampleBuff[i] >>> 8);
 		}
-
-		// for(int i = this.sampleBuff.length - FilterInfo.COUNT_OF_COEFS, p =
-		// 0; i < this.sampleBuff.length - 1; i++) {
-		// this.prevSignal[p] = this.sampleBuff[i];
-		// p++;
-		// }
 
 		return buff;
 

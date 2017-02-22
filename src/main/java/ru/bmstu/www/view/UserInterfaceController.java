@@ -271,7 +271,7 @@ public class UserInterfaceController implements Initializable {
 			if (audioPlayer.getFftReady() && graphFlag) {
 				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
 					series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i]) / 10);
-					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i] * 20 ) / 10);
+					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i] * 5) / 10);
 				}
 			}
 		}
