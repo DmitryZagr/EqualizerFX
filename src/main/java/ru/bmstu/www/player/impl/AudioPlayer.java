@@ -20,19 +20,12 @@ import ru.bmstu.www.input.ReadMusicFile;
 import ru.bmstu.www.player.IAudioPlayer;
 
 public class AudioPlayer extends Observable implements IAudioPlayer {
-	private double volume;
+	
 	private SourceDataLine sourceDataLine;
 	private AudioInputStream ais;
 	private byte[] buff;
 	private final int BUFF_SIZE = 1024;
 	private short[] sampleBuff;
-
-	private Delay delay;
-	private boolean isDelay;
-
-	private Overdrive overdrive;
-	private double overdriveCoef;
-	private boolean isOverdrive;
 
 	private Equalizer equalizer;
 
@@ -53,53 +46,12 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		this.ais = readFile.getAudioInputStream();
 		this.buff = new byte[this.BUFF_SIZE];
 		this.sampleBuff = new short[BUFF_SIZE / 2];
-		this.delay = new Delay();
-		this.overdrive = new Overdrive();
-		this.isDelay = false;
-		this.isOverdrive = false;
-		this.overdriveCoef = 1.0;
 		this.equalizer = new Equalizer(BUFF_SIZE / 2);
 		AudioFileFormat aff = new AudioFileFormat();
 		format = new AudioFormat((float) aff.getSampleRate(), aff.getBits(), aff.getChannels(), aff.isSigned(),
 				aff.isBigEndian());
-		this.volume = 0.3;
 		this.fastFourierInput = new FFT();
 		this.fastFourierOutput = new FFT();
-	}
-
-	private void delay(short[] inputSamples) {
-		this.delay.setInputSampleStream(inputSamples);
-		this.delay.createEffect();
-	}
-
-	public boolean delayIsActive() {
-		return this.isDelay;
-	}
-
-	public void setDelay(boolean b) {
-		this.isDelay = b;
-	}
-
-	public void setDelayCoef(double coef) {
-		this.delay.setDelayCoef(coef);
-	}
-
-	private void overdrive(short[] inputSamples) {
-		this.overdrive.setOverdriveCoef(this.overdriveCoef);
-		this.overdrive.setInputSampleStream(inputSamples);
-		this.overdrive.createEffect();
-	}
-
-	public boolean overdriveIsActive() {
-		return this.isOverdrive;
-	}
-
-	public void setOverdrive(boolean b) {
-		this.isOverdrive = b;
-	}
-
-	public void setOverdriveCoef(double c) {
-		this.overdriveCoef = c;
 	}
 
 	public void setPause(boolean pause) {
@@ -108,14 +60,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	public boolean getPause() {
 		return this.paused;
-	}
-
-	public void setVolume(double volume) {
-		this.volume = volume;
-	}
-
-	public double getVolume() {
-		return this.volume;
 	}
 
 	public short[] getSamples() {
@@ -156,13 +100,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		return this.FFTready;
 	}
 
-	public void resetToDefault() {
-		this.isDelay = false;
-		this.isOverdrive = false;
-		this.overdriveCoef = 1.0;
-		this.volume = 0.3;
-	}
-
 	@Override
 	public void run() {
 		try {
@@ -183,13 +120,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 				equalizer.setInputSignal(this.sampleBuff);
 				this.equalizer.equalization();
 				this.sampleBuff = equalizer.getOutputSignal();
-				
-				if (this.isDelay)
-					this.delay(this.sampleBuff);
-
-				if (this.isOverdrive) {
-					this.overdrive(sampleBuff);
-				}
 
 				this.fastFourierOutput.fft(this.sampleBuff);
 
@@ -233,7 +163,6 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 			try {
 				this.ais.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		if (this.sourceDataLine != null)

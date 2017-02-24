@@ -3,17 +3,26 @@ package ru.bmstu.www.effect;
 public abstract class Effect {
 
 	protected boolean isActive;
-	protected short[] inputAudioStream;
+	protected double coef;
+	// protected short[] inputAudioStream;
 
-	public abstract short[] createEffect();
+	// public abstract short[] createEffect();
 
-	public short[] getOutputAudioStream() {
-		return this.inputAudioStream;
+	// public short[] getOutputAudioStream() {
+	// return this.inputAudioStream;
+	// }
+	//
+	// public void setInputSampleStream(short[] inputAudioStream) {
+	// this.inputAudioStream = inputAudioStream;
+	// }
+
+	public void setCoef(double coef) {
+		this.coef = coef;
 	}
 
-	public void setInputSampleStream(short[] inputAudioStream) {
-		this.inputAudioStream = inputAudioStream;
-	}
+	public abstract void pushSample(double sample);
+
+	public abstract double popSample();
 
 	public boolean isActive() {
 		return this.isActive;

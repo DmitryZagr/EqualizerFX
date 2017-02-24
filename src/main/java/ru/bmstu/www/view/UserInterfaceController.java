@@ -28,6 +28,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import ru.bmstu.www.effects.impl.Overdrive;
 import ru.bmstu.www.player.impl.AudioPlayer;
 import ru.bmstu.www.util.EqualizerUtil;
 import javafx.stage.Stage;;
@@ -69,6 +70,9 @@ public class UserInterfaceController implements Initializable {
 	private GraphListener graphListener = new GraphListener();
 
 	private Map<Slider, Label> equalizerSliderToLabel = new HashMap<>();
+
+	private String overdrive = "Overdrive";
+	private String delay = "Delay";
 
 	/**
 	 * Initializes the controller class.
@@ -114,7 +118,7 @@ public class UserInterfaceController implements Initializable {
 		this.yAxis.setLowerBound(-0.2);
 		this.yAxis.setUpperBound(0.3);
 		this.yAxis.setAnimated(false);
-		
+
 		this.volumeFromSlider();
 	}
 
@@ -134,10 +138,12 @@ public class UserInterfaceController implements Initializable {
 			this.audioPlayer.stop();
 			this.audioPlayer = null;
 		}
-		
+
 		this.clickReset();
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
+		this.audioPlayer.getEqualizer().setVolume(1.0);
+		this.audioPlayer.getEqualizer().bindEffect(overdrive, new Overdrive());
 
 		playThread = new Thread(this.audioPlayer);
 
@@ -168,14 +174,11 @@ public class UserInterfaceController implements Initializable {
 			iter.next().getKey().setValue(1.0);
 		}
 
-		if (this.audioPlayer != null)
-			this.audioPlayer.resetToDefault();
-		
 		this.delayCheck.setSelected(false);
 		this.overdriveCheck.setSelected(false);
 
-		soundSlider.setValue(0.3);
-		this.overdriveSlider.setValue(1.0);
+		soundSlider.setValue(1.0);
+		this.overdriveSlider.setValue(0.5);
 		this.delaySlider.setValue(1.0);
 	}
 
@@ -213,14 +216,14 @@ public class UserInterfaceController implements Initializable {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
-				audioPlayer.setOverdriveCoef(newValue.doubleValue());
+				audioPlayer.getEqualizer().getEffect(overdrive).setCoef(newValue.doubleValue());
 			}
 		});
 
 		delaySlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				audioPlayer.setDelayCoef(newValue.doubleValue());
+				// TODO audioPlayer.setDelayCoef(newValue.doubleValue());
 			}
 		});
 	}
@@ -229,21 +232,22 @@ public class UserInterfaceController implements Initializable {
 		soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				audioPlayer.setVolume(newValue.doubleValue());
+				audioPlayer.getEqualizer().setVolume(newValue.doubleValue());
 			}
 		});
 	}
 
 	@FXML
 	private void createDelay() {
-		if (this.audioPlayer != null)
-			this.audioPlayer.setDelay(this.delayCheck.isSelected());
+		//TODO
+		// if (this.audioPlayer != null)
+		// this.audioPlayer.setDelay(this.delayCheck.isSelected());
 	}
 
 	@FXML
 	private void createOverdrive() {
 		if (this.audioPlayer != null)
-			this.audioPlayer.setOverdrive(this.overdriveCheck.isSelected());
+			this.audioPlayer.getEqualizer().getEffect(overdrive).setStatus(true);
 	}
 
 	@FXML
