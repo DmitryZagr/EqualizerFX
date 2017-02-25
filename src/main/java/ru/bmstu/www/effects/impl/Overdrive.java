@@ -29,7 +29,7 @@ public final class Overdrive extends Effect {
 
 	private void createEffect() {
 		this.setMaxAndMinAmpl();
-		this.currentSample = this.currentSample > this.standartMax ? this.maxAmplitude
+		this.currentSample = this.currentSample > standartMax ? this.maxAmplitude
 				: this.currentSample < this.minAmplitude ? this.minAmplitude : this.currentSample;
 	}
 

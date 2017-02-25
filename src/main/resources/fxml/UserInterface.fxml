@@ -54,7 +54,7 @@
              	<VBox>
                 		<padding> <javafx.geometry.Insets  top="10" /> </padding>
                 		<Slider fx:id="delaySlider" 
-                        	max="2"  min="0.01" value="1.0" rotate="0" maxWidth="110">    
+                        	max="2"  min="0.0" value="1.0" rotate="0" maxWidth="110">
                 		</Slider>
               	</VBox> 
               	

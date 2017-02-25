@@ -1,8 +1,6 @@
 package ru.bmstu.www.equalizer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -131,6 +129,13 @@ public class Equalizer {
 
 	public double getVolume() {
 		return this.volume;
+	}
+
+	public void setDefaults() {
+		effects.forEach((k, e) -> {
+			e.setStatus(false);
+		});
+		this.volume = 0.5;
 	}
 
 }

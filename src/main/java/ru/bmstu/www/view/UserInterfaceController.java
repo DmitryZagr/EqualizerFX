@@ -28,6 +28,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import ru.bmstu.www.effects.impl.Delay;
 import ru.bmstu.www.effects.impl.Overdrive;
 import ru.bmstu.www.player.impl.AudioPlayer;
 import ru.bmstu.www.util.EqualizerUtil;
@@ -142,8 +143,8 @@ public class UserInterfaceController implements Initializable {
 		this.clickReset();
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
-		this.audioPlayer.getEqualizer().setVolume(1.0);
 		this.audioPlayer.getEqualizer().bindEffect(overdrive, new Overdrive());
+		 this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
 
 		playThread = new Thread(this.audioPlayer);
 
@@ -180,6 +181,8 @@ public class UserInterfaceController implements Initializable {
 		soundSlider.setValue(1.0);
 		this.overdriveSlider.setValue(0.5);
 		this.delaySlider.setValue(1.0);
+		
+		this.audioPlayer.getEqualizer().setDefaults();
 	}
 
 	private void initializeEqualizerElements() {
@@ -223,7 +226,7 @@ public class UserInterfaceController implements Initializable {
 		delaySlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				// TODO audioPlayer.setDelayCoef(newValue.doubleValue());
+				audioPlayer.getEqualizer().getEffect(delay).setCoef(newValue.doubleValue());
 			}
 		});
 	}
@@ -239,15 +242,15 @@ public class UserInterfaceController implements Initializable {
 
 	@FXML
 	private void createDelay() {
-		//TODO
-		// if (this.audioPlayer != null)
-		// this.audioPlayer.setDelay(this.delayCheck.isSelected());
+		if (this.audioPlayer != null)
+			this.audioPlayer.getEqualizer().getEffect(delay).setStatus(this.delayCheck.isSelected());
 	}
 
 	@FXML
 	private void createOverdrive() {
-		if (this.audioPlayer != null)
-			this.audioPlayer.getEqualizer().getEffect(overdrive).setStatus(true);
+		if (this.audioPlayer != null) {
+			this.audioPlayer.getEqualizer().getEffect(overdrive).setStatus(this.overdriveCheck.isSelected());
+		}
 	}
 
 	@FXML

@@ -11,8 +11,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import ru.bmstu.www.effects.impl.Delay;
-import ru.bmstu.www.effects.impl.Overdrive;
 import ru.bmstu.www.equalizer.Equalizer;
 import ru.bmstu.www.fft.FFT;
 import ru.bmstu.www.input.AudioFileFormat;
