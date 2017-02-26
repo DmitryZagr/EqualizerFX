@@ -21,7 +21,7 @@ public class Equalizer {
 	private final int lenghtOfInputSignal;
 	private ExecutorService pool;
 	private Future<double[]>[] futureTasks;
-	private static final double NORMALIZE = 0.1;
+	private static final double NORMALIZE = 0.05;
 	private double volume = 1.0;
 	private Map<String, Effect> effects = new HashMap<>();
 
@@ -89,7 +89,8 @@ public class Equalizer {
 		for (int i = 0; i < this.outputSignal.length; i++) {
 			for (Future<double[]> task : futureTasks) {
 				sum += task.get()[i];
-				sum *= NORMALIZE * this.getVolume();
+//				sum *= NORMALIZE * this.getVolume();
+				sum *= NORMALIZE;
 				this.outputSignal[i] += sum;
 			}
 			final int index = i;

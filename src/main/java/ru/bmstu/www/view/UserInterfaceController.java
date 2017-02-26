@@ -116,9 +116,11 @@ public class UserInterfaceController implements Initializable {
 		this.graph.getYAxis();
 		this.graph.setCache(true);
 
-		this.yAxis.setLowerBound(-0.2);
-		this.yAxis.setUpperBound(0.3);
+		yAxis.setAutoRanging(true);
+//		this.yAxis.setUpperBound(100);
+//		this.yAxis.setLowerBound(10);
 		this.yAxis.setAnimated(false);
+		// yAxis.
 
 		this.volumeFromSlider();
 	}
@@ -144,7 +146,7 @@ public class UserInterfaceController implements Initializable {
 
 		this.audioPlayer = new AudioPlayer(selectedFile);
 		this.audioPlayer.getEqualizer().bindEffect(overdrive, new Overdrive());
-		 this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
+		this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
 
 		playThread = new Thread(this.audioPlayer);
 
@@ -172,7 +174,7 @@ public class UserInterfaceController implements Initializable {
 		Iterator<Entry<Slider, Label>> iter = equalizerSliderToLabel.entrySet().iterator();
 
 		while (iter.hasNext()) {
-			iter.next().getKey().setValue(1.0);
+			iter.next().getKey().setValue(0.0);
 		}
 
 		this.delayCheck.setSelected(false);
@@ -181,7 +183,7 @@ public class UserInterfaceController implements Initializable {
 		soundSlider.setValue(1.0);
 		this.overdriveSlider.setValue(0.5);
 		this.delaySlider.setValue(1.0);
-		
+
 		this.audioPlayer.getEqualizer().setDefaults();
 	}
 
@@ -201,6 +203,7 @@ public class UserInterfaceController implements Initializable {
 
 			Entry<Slider, Label> sliderToLabel = iter.next();
 
+			sliderToLabel.getKey().setBlockIncrement(1.0);
 			sliderToLabel.getKey().valueProperty().addListener(new ChangeListener<Number>() {
 				@Override
 				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -277,8 +280,8 @@ public class UserInterfaceController implements Initializable {
 		public void update(Observable o, Object arg) {
 			if (audioPlayer.getFftReady() && graphFlag) {
 				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
-					series2Data[i].setYValue(Math.log10(audioPlayer.getFTvlInput()[i]) / 10);
-					series1Data[i].setYValue(Math.log10(audioPlayer.getFTvlOutput()[i] * 10) / 10);
+					series1Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlOutput()[i] / 0.05));
+					series2Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlInput()[i]));
 				}
 			}
 		}

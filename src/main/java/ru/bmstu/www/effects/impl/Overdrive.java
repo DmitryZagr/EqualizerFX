@@ -15,22 +15,12 @@ public final class Overdrive extends Effect {
 		this.coef = 0.5;
 	}
 
-	// @Override
-	// public synchronized short[] createEffect() {
-	// this.setMaxAndMinAmpl();
-	// for (int i = 0; i < this.inputAudioStream.length; i++) {
-	// if (this.inputAudioStream[i] > this.maxAmplitude)
-	// this.inputAudioStream[i] = (this.maxAmplitude);
-	// else if (this.inputAudioStream[i] < this.minAmplitude)
-	// this.inputAudioStream[i] = (this.minAmplitude);
-	// }
-	// return this.inputAudioStream;
-	// }
-
 	private void createEffect() {
 		this.setMaxAndMinAmpl();
-		this.currentSample = this.currentSample > standartMax ? this.maxAmplitude
-				: this.currentSample < this.minAmplitude ? this.minAmplitude : this.currentSample;
+		if (this.currentSample > this.maxAmplitude)
+			this.currentSample = this.maxAmplitude;
+		else if (this.currentSample < this.minAmplitude)
+			this.currentSample = this.minAmplitude;
 	}
 
 	private void setMaxAndMinAmpl() {

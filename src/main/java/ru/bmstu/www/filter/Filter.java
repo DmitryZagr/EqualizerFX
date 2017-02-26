@@ -9,6 +9,7 @@ public class Filter implements Callable<double[]> {
 	protected double[] outputSignal;
 	protected double gain;
 	protected short[] buff;
+	protected final static double dB = 1.259;
 
 	private Filter(final double[] coefsFilter, int lenghtOfInputSignal) {
 		gain = 1.0;
@@ -34,7 +35,7 @@ public class Filter implements Callable<double[]> {
 			this.buff[buff.length - 1] = this.inputSignal[i];
 
 			for (int j = 0; j < this.coefsFilter.length - 1; j++) {
-				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j] * gain;
+				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j] * Math.pow(10, gain / 20);
 			}
 		}
 
