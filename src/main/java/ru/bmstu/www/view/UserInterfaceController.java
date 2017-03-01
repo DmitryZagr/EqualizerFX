@@ -149,6 +149,7 @@ public class UserInterfaceController implements Initializable {
 		this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
 
 		playThread = new Thread(this.audioPlayer);
+		playThread.setName("AUDIOPLAYER" + Math.random() * 77);
 
 		this.audioPlayer.addObserver(graphListener);
 

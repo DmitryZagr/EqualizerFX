@@ -57,8 +57,9 @@ public class Filter implements Callable<double[]> {
 			this.buff[buff.length - 1] = this.inputSignal[i];
 
 			for (int j = 0; j < this.coefsFilter.length - 1; j++) {
-				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j] * Math.pow(10, gain / 20);
+				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j];
 			}
+			this.outputSignal[i] *= Math.pow(10, gain / 20);
 		}
 
 		return this.outputSignal;

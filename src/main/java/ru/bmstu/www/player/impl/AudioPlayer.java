@@ -152,6 +152,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		if (this.ais != null)
 			try {
 				this.ais.close();
+				this.equalizer.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
