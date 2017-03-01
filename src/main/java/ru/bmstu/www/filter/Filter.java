@@ -48,13 +48,12 @@ public class Filter implements Callable<double[]> {
 	}
 	
 
-	private double[] svertka() {
+	private double[] convolution() {
 
 		for (int i = 0; i < inputSignal.length; i++) {
 			this.outputSignal[i] = 0.0;
 
-			System.arraycopy(this.buff, 1, this.buff, 0, buff.length - 1);
-			this.buff[buff.length - 1] = this.inputSignal[i];
+			this.manageFilterMemory(this.inputSignal[i]);
 
 			for (int j = 0; j < this.coefsFilter.length - 1; j++) {
 				this.outputSignal[i] += this.coefsFilter[j] * buff[buff.length - 1 - j];
@@ -63,6 +62,12 @@ public class Filter implements Callable<double[]> {
 		}
 
 		return this.outputSignal;
+	}
+	
+	private short[] manageFilterMemory(short newSample) {
+		System.arraycopy(this.buff, 1, this.buff, 0, buff.length - 1);
+		this.buff[buff.length - 1] = newSample;
+		return this.buff;
 	}
 
 	public void setInputSignal(short[] inputSignal) {
@@ -79,7 +84,7 @@ public class Filter implements Callable<double[]> {
 
 	@Override
 	public double[] call() throws Exception {
-		this.svertka();
+		this.convolution();
 		return this.outputSignal;
 	}
 
