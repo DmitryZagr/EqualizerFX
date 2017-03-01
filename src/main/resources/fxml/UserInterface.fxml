@@ -87,7 +87,7 @@
                 <VBox>
                 	<padding> <javafx.geometry.Insets  top="10" /> </padding>
                 	<Slider fx:id="overdriveSlider" 
-                        max="1.0"  min="0.0" value="0.5" rotate="0" maxWidth="110">
+                        max="1.0"  min="0.01" value="0.5" rotate="0" maxWidth="110">
                 	</Slider>
                 </VBox>
             </VBox>
