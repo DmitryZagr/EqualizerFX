@@ -34,7 +34,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	private AudioFormat format;
 	private FFT fastFourierInput;
 	private FFT fastFourierOutput;
-	private boolean FFTready = false;
+	private boolean isFFTready = false;
 
 	public AudioPlayer(File musicFile)
 			throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
@@ -52,16 +52,8 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		this.fastFourierOutput = new FFT();
 	}
 
-	public void setPause(boolean pause) {
-		this.paused = pause;
-	}
-
-	public boolean getPause() {
+	public boolean isPause() {
 		return this.paused;
-	}
-
-	public short[] getSamples() {
-		return this.sampleBuff;
 	}
 
 	private short[] ByteArrayToSamplesArray() {
@@ -94,8 +86,8 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		return this.fastFourierInput.getFTvl();
 	}
 
-	public boolean getFftReady() {
-		return this.FFTready;
+	public boolean isFftReady() {
+		return this.isFFTready;
 	}
 
 	@Override
@@ -112,7 +104,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 				this.sampleBuff = this.ByteArrayToSamplesArray();
 
-				FFTready = false;
+				isFFTready = false;
 				this.fastFourierInput.fft(this.sampleBuff);
 
 				equalizer.setInputSignal(this.sampleBuff);
@@ -121,7 +113,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 				this.fastFourierOutput.fft(this.sampleBuff);
 
-				FFTready = true;
+				isFFTready = true;
 
 				setChanged();
 				notifyObservers();
@@ -129,7 +121,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 				this.buff = this.SampleArrayByteArray();
 				sourceDataLine.write(this.buff, 0, this.buff.length);
 			}
-			this.FFTready = false;
+			this.isFFTready = false;
 			this.sourceDataLine.drain();
 			this.sourceDataLine.close();
 		} catch (Exception e) {

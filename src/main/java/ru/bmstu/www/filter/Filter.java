@@ -11,20 +11,42 @@ public class Filter implements Callable<double[]> {
 	protected short[] buff;
 	protected final static double dB = 1.259;
 
-	private Filter(final double[] coefsFilter, int lenghtOfInputSignal) {
-		gain = 1.0;
-		this.coefsFilter = coefsFilter;
-		this.outputSignal = new double[lenghtOfInputSignal];
-		this.buff = new short[(this.coefsFilter.length)];
+	public static class FilterBuilder {
+		private double[] coefsFilter;
+		private double[] outputSignal;
+		private double gain;
+		private short[] buff;
+		
+		public FilterBuilder coefsFilter(double[] coefsFilter) {
+			this.coefsFilter = coefsFilter;
+			this.buff = new short[(this.coefsFilter.length)];
+			return this;
+		}
+		
+		public FilterBuilder lenghtOfInputSignal(int lenghtOfInputSignal) {
+			this.outputSignal = new double[lenghtOfInputSignal];
+			return this;
+		}
+		
+		public FilterBuilder gain(double gain) {
+			this.gain = gain;
+			return this;
+		}
+		
+		
+		public  Filter build() {
+			return new Filter(this);
+		}
+		
 	}
-
-	public static Filter settings(final double[] coefsFilter, int lenghtOfInputSignal) {
-		return new Filter(coefsFilter, lenghtOfInputSignal);
+	
+	private  Filter(FilterBuilder filterBuilder) {
+		this.gain = filterBuilder.gain;
+		this.coefsFilter = filterBuilder.coefsFilter;
+		this.buff = filterBuilder.buff;
+		this.outputSignal = filterBuilder.outputSignal;
 	}
-
-	public Filter build() {
-		return this;
-	}
+	
 
 	private double[] svertka() {
 

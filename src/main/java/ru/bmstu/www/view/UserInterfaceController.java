@@ -158,7 +158,7 @@ public class UserInterfaceController implements Initializable {
 	@FXML
 	private void clickStopPlay() {
 		if (this.audioPlayer != null) {
-			if (!this.audioPlayer.getPause())
+			if (!this.audioPlayer.isPause())
 				this.audioPlayer.pause();
 			else
 				this.audioPlayer.resume();
@@ -278,7 +278,7 @@ public class UserInterfaceController implements Initializable {
 
 		@Override
 		public void update(Observable o, Object arg) {
-			if (audioPlayer.getFftReady() && graphFlag) {
+			if (audioPlayer.isFftReady() && graphFlag) {
 				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
 					series1Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlOutput()[i] / 0.05));
 					series2Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlInput()[i]));

@@ -71,8 +71,11 @@ public class Equalizer {
 
 		this.filters = new Filter[COUNT_OF_BANDS];
 
+		Filter.FilterBuilder filterBuilder = new Filter.FilterBuilder();
+
 		for (int i = 0; i < filters.length; i++) {
-			this.filters[i] = Filter.settings(FilterInfo.CoefsOfBands[i], this.lenghtOfInputSignal).build();
+			this.filters[i] = filterBuilder.gain(1.0).coefsFilter(FilterInfo.CoefsOfBands[i])
+					.lenghtOfInputSignal(this.lenghtOfInputSignal).build();
 		}
 
 		return this;
@@ -89,7 +92,7 @@ public class Equalizer {
 		for (int i = 0; i < this.outputSignal.length; i++) {
 			for (Future<double[]> task : futureTasks) {
 				sum += task.get()[i];
-//				sum *= NORMALIZE * this.getVolume();
+				// sum *= NORMALIZE * this.getVolume();
 				sum *= NORMALIZE;
 				this.outputSignal[i] += sum;
 			}
