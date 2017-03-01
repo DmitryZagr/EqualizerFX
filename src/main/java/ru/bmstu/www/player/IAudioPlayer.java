@@ -1,12 +1,16 @@
 package ru.bmstu.www.player;
 
-public interface IAudioPlayer extends Runnable {
+import java.io.File;
 
-	public void run();
+public interface IAudioPlayer {
+
+	public void play();
 
 	public void pause();
 
 	public void resume();
 
 	public void stop();
+
+	public void setMusicFile(File file);
 }

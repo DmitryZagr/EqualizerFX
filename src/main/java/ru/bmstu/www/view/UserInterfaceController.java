@@ -64,7 +64,6 @@ public class UserInterfaceController implements Initializable {
 	private XYChart.Data<Integer, Number>[] series2Data;
 
 	private AudioPlayer audioPlayer;
-	private Thread playThread;
 
 	private int countOfPointsOnPlot = 128;
 
@@ -74,7 +73,7 @@ public class UserInterfaceController implements Initializable {
 
 	private String overdrive = "Overdrive";
 	private String delay = "Delay";
-	
+
 	private boolean draw = false;
 
 	/**
@@ -93,9 +92,8 @@ public class UserInterfaceController implements Initializable {
 		XYChart.Series<Integer, Number> series1 = new XYChart.Series<>();
 		XYChart.Series<Integer, Number> series2 = new XYChart.Series<>();
 		series1.setName("Модифицированный");
-		// series1.getChart()
 		series2.setName("Оригинал");
-		series1Data = new XYChart.Data[this.countOfPointsOnPlot]; // 256
+		series1Data = new XYChart.Data[this.countOfPointsOnPlot];
 		series2Data = new XYChart.Data[this.countOfPointsOnPlot];
 
 		for (int i = 0; i < series1Data.length; i++) {
@@ -122,9 +120,16 @@ public class UserInterfaceController implements Initializable {
 		this.yAxis.setUpperBound(100);
 		this.yAxis.setLowerBound(-10);
 		this.yAxis.setAnimated(false);
-		// yAxis.
 
 		this.volumeFromSlider();
+
+		initializeAudioPlayer();
+	}
+
+	private void initializeAudioPlayer() {
+		this.audioPlayer = new AudioPlayer();
+		this.audioPlayer.getEqualizer().bindEffect(overdrive, new Overdrive());
+		this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
 	}
 
 	@FXML
@@ -138,24 +143,9 @@ public class UserInterfaceController implements Initializable {
 		if (selectedFile == null)
 			return;
 
-		if (this.audioPlayer != null) {
-			this.audioPlayer.deleteObserver(graphListener);
-			this.audioPlayer.stop();
-			this.audioPlayer = null;
-		}
-
-		this.clickReset();
-
-		this.audioPlayer = new AudioPlayer(selectedFile);
-		this.audioPlayer.getEqualizer().bindEffect(overdrive, new Overdrive());
-		this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
-
-		playThread = new Thread(this.audioPlayer);
-		playThread.setName("AUDIOPLAYER " + Math.random() * 77);
-
+		this.audioPlayer.setMusicFile(selectedFile);
+		this.audioPlayer.play();
 		this.audioPlayer.addObserver(graphListener);
-
-		playThread.start();
 	}
 
 	@FXML
@@ -166,7 +156,6 @@ public class UserInterfaceController implements Initializable {
 			else
 				this.audioPlayer.resume();
 		}
-
 	}
 
 	@FXML
@@ -183,7 +172,7 @@ public class UserInterfaceController implements Initializable {
 		this.delayCheck.setSelected(false);
 		this.overdriveCheck.setSelected(false);
 
-		soundSlider.setValue(1.0);
+		soundSlider.setValue(0.5);
 		this.overdriveSlider.setValue(0.5);
 		this.delaySlider.setValue(1.0);
 
@@ -278,14 +267,14 @@ public class UserInterfaceController implements Initializable {
 
 		private double[] notModify = new double[countOfPointsOnPlot];
 		private double[] modify = new double[countOfPointsOnPlot];
-		
+
 		@Override
 		public void update(Observable o, Object arg) {
 			if (audioPlayer.isFftReady() && graphFlag && !draw) {
 				draw = true;
 				System.arraycopy(audioPlayer.getFTvlOutput(), 0, modify, 0, countOfPointsOnPlot);
 				System.arraycopy(audioPlayer.getFTvlInput(), 0, notModify, 0, countOfPointsOnPlot);
-				for (int i = 0; i < countOfPointsOnPlot ; i++) {
+				for (int i = 0; i < countOfPointsOnPlot; i++) {
 					series1Data[i].setYValue(20 * Math.log10(modify[i] / 0.05));
 					series2Data[i].setYValue(20 * Math.log10(notModify[i]));
 				}

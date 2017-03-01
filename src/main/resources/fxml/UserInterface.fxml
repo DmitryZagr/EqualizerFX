@@ -32,7 +32,7 @@
                     <javafx.geometry.Insets  top="5" />
                 </padding>
                 <Slider fx:id="soundSlider" 
-                        max="1.0" min="0.001" value="1.0" rotate="0">
+                        max="1.0" min="0.001" value="0.5" rotate="0">
                 </Slider>
                 <HBox >
                     <padding>
