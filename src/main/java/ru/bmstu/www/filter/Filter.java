@@ -73,16 +73,8 @@ public class Filter implements Callable<double[]> {
 		this.gain = d;
 	}
 
-	public double getGain() {
-		return this.gain;
-	}
-
 	public double[] getOutputSignal() {
 		return this.outputSignal;
-	}
-
-	public long getCountOfSamples() {
-		return this.inputSignal.length;
 	}
 
 	@Override
