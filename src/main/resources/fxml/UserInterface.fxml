@@ -115,11 +115,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0"
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0"
                 			fx:id="Slider_0" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text="  1-350 Hz" > </Label>
+                <Label  text="  0-128 Hz" > </Label>
             </VBox>
             <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="1">
                 <HBox>
@@ -128,11 +128,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0" 
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0" 
                 			fx:id="Slider_1" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text=" 0.3-1 kHz" > </Label>
+                <Label  text=" 0.15-390 Hz" > </Label>
             </VBox>
             <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="2">
             	<HBox>
@@ -141,10 +141,10 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="30" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0" fx:id="Slider_2"> 
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0" fx:id="Slider_2"> 
                 	</Slider>
                 </HBox>
-                <Label  text="0.9-2.4 kHz" > </Label>
+                <Label  text="330-900 Hz" > </Label>
             </VBox>
             <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="3">
                 <HBox>
@@ -153,11 +153,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0"
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0"
                 			fx:id="Slider_3" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text="2.2-5.1 kHz" > </Label>
+                <Label  text="0.8-1.9 kHz" > </Label>
             </VBox>
             <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="4">
                 <HBox>
@@ -166,11 +166,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0" 
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0" 
                 			fx:id="Slider_4" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text="4.5-6.5 kHz" > </Label>
+                <Label  text="1.7-4.0 kHz" > </Label>
             </VBox>
             <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="5">
                 <HBox>
@@ -179,11 +179,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0" 
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0" 
                 			fx:id="Slider_5" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text="6.0-11.5 kHz" > </Label>
+                <Label  text="3.6-8.0 kHz" > </Label>
             </VBox>
              <VBox   spacing="10" GridPane.rowIndex="0" GridPane.columnIndex="6">
                 <HBox>
@@ -192,11 +192,11 @@
                 </HBox>
                 <HBox>
                 	<padding> <javafx.geometry.Insets  left="25" /> </padding>
-                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-15.0" 
+                	<Slider orientation="VERTICAL" max="15" value="0.0" min="-30.0" 
                 			fx:id="Slider_6" maxHeight="70" minHeight="70"> 
                 	</Slider>
                 </HBox>
-                <Label  text="   11-16 kHz" > </Label>
+                <Label  text=" 7.2-16.0 kHz" > </Label>
             </VBox>
          
         </GridPane>
@@ -205,7 +205,7 @@
     <bottom>
         <LineChart fx:id="graph" maxHeight="350"  >
             <xAxis>
-                <NumberAxis label="Frequency, 110 * Hz" fx:id="xAxis" />
+                <NumberAxis label="Frequency, 345 * Hz" fx:id="xAxis" />
             </xAxis>
             <yAxis>
                 <NumberAxis label="Magnitude"  fx:id="yAxis" />

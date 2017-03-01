@@ -4,18 +4,14 @@ package ru.bmstu.www.fft;
 public class FFT {
 	private final double TwoPi = 6.283185307179586;
 	private short[] AVal;
-	private int Nvl;
-	private double[] FTvl;
-	private int Nft;
+	// должно быть равно количеству точек на графике / 2.
+	private int Nvl = 256;
+	private int Nft = Nvl;
+	private double[] FTvl = new double[this.Nft];
 
 	public void fft(final short[] inputSignal) {
 
 		this.AVal = inputSignal;
-		// this.Nvl = this.AVal.length;
-		// должно быть равно количеству точек на графике.
-		this.Nvl = 128;
-		this.Nft = this.Nvl;
-		this.FTvl = new double[this.Nft];
 
 		int i, j, n, m, Mmax, Istp;
 		double Tmpr, Tmpi, Wtmp, Theta;

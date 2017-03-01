@@ -74,6 +74,8 @@ public class UserInterfaceController implements Initializable {
 
 	private String overdrive = "Overdrive";
 	private String delay = "Delay";
+	
+	private boolean draw = false;
 
 	/**
 	 * Initializes the controller class.
@@ -116,9 +118,9 @@ public class UserInterfaceController implements Initializable {
 		this.graph.getYAxis();
 		this.graph.setCache(true);
 
-		yAxis.setAutoRanging(true);
-//		this.yAxis.setUpperBound(100);
-//		this.yAxis.setLowerBound(10);
+		yAxis.setAutoRanging(false);
+		this.yAxis.setUpperBound(100);
+		this.yAxis.setLowerBound(-10);
 		this.yAxis.setAnimated(false);
 		// yAxis.
 
@@ -149,7 +151,7 @@ public class UserInterfaceController implements Initializable {
 		this.audioPlayer.getEqualizer().bindEffect(delay, new Delay());
 
 		playThread = new Thread(this.audioPlayer);
-		playThread.setName("AUDIOPLAYER" + Math.random() * 77);
+		playThread.setName("AUDIOPLAYER " + Math.random() * 77);
 
 		this.audioPlayer.addObserver(graphListener);
 
@@ -269,21 +271,25 @@ public class UserInterfaceController implements Initializable {
 
 	@FXML
 	private void createGraph() {
-		if (this.graphFlag == false) {
-			this.graphFlag = true;
-		} else
-			this.graphFlag = false;
+		this.graphFlag = this.graphCheck.isSelected();
 	}
 
 	private class GraphListener implements Observer {
 
+		private double[] notModify = new double[countOfPointsOnPlot];
+		private double[] modify = new double[countOfPointsOnPlot];
+		
 		@Override
 		public void update(Observable o, Object arg) {
-			if (audioPlayer.isFftReady() && graphFlag) {
-				for (int i = 0; i < audioPlayer.getFTvlOutput().length; i++) {
-					series1Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlOutput()[i] / 0.05));
-					series2Data[i].setYValue(20 * Math.log10(audioPlayer.getFTvlInput()[i]));
+			if (audioPlayer.isFftReady() && graphFlag && !draw) {
+				draw = true;
+				System.arraycopy(audioPlayer.getFTvlOutput(), 0, modify, 0, countOfPointsOnPlot);
+				System.arraycopy(audioPlayer.getFTvlInput(), 0, notModify, 0, countOfPointsOnPlot);
+				for (int i = 0; i < countOfPointsOnPlot ; i++) {
+					series1Data[i].setYValue(20 * Math.log10(modify[i] / 0.05));
+					series2Data[i].setYValue(20 * Math.log10(notModify[i]));
 				}
+				draw = false;
 			}
 		}
 
