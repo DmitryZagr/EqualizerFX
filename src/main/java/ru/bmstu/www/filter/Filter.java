@@ -10,12 +10,14 @@ public class Filter implements Callable<double[]> {
 	protected double gain;
 	protected short[] buff;
 	protected final static double dB = 1.259;
+	protected final int FILTER_ID;
 
 	public static class FilterBuilder {
 		private double[] coefsFilter;
 		private double[] outputSignal;
 		private double gain;
 		private short[] buff;
+		private int id;
 
 		public FilterBuilder coefsFilter(double[] coefsFilter) {
 			this.coefsFilter = coefsFilter;
@@ -32,6 +34,11 @@ public class Filter implements Callable<double[]> {
 			this.gain = gain;
 			return this;
 		}
+		
+		public FilterBuilder id(int id) {
+			this.id = id;
+			return this;
+		}
 
 		public Filter build() {
 			return new Filter(this);
@@ -40,6 +47,7 @@ public class Filter implements Callable<double[]> {
 	}
 
 	private Filter(FilterBuilder filterBuilder) {
+		this.FILTER_ID = filterBuilder.id;
 		this.gain = filterBuilder.gain;
 		this.coefsFilter = filterBuilder.coefsFilter;
 		this.buff = filterBuilder.buff;

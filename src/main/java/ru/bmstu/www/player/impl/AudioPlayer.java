@@ -28,8 +28,8 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	private final int BUFF_SIZE = 512;
 
-	private FFT fastFourierInput;
-	private FFT fastFourierOutput;
+	private FFT fastFourierFromUnmodifiedSignal;
+	private FFT fastFourierFromModifiedSignal;
 	private boolean isFFTready = false;
 
 	public AudioPlayer() {
@@ -38,8 +38,8 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		equalizer = equalizerBuilder.countOfBands(FilterInfo.CoefsOfBands.length).lenghtOfInputSignal(BUFF_SIZE / 2)
 				.build();
 
-		this.fastFourierInput = new FFT();
-		this.fastFourierOutput = new FFT();
+		this.fastFourierFromUnmodifiedSignal = new FFT();
+		this.fastFourierFromModifiedSignal = new FFT();
 	}
 
 	public boolean isPause() {
@@ -51,11 +51,11 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 	}
 
 	public double[] getFTvlOutput() {
-		return this.fastFourierOutput.getFTvl();
+		return this.fastFourierFromModifiedSignal.getFTvl();
 	}
 
 	public double[] getFTvlInput() {
-		return this.fastFourierInput.getFTvl();
+		return this.fastFourierFromUnmodifiedSignal.getFTvl();
 	}
 
 	public boolean isFftReady() {
@@ -121,13 +121,13 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 					sampleBuff = byteArrayToSamplesArray();
 
 					isFFTready = false;
-					fastFourierInput.fft(sampleBuff);
+					fastFourierFromUnmodifiedSignal.fft(sampleBuff);
 
 					equalizer.setInputSignal(sampleBuff);
 					equalizer.equalization();
 					sampleBuff = equalizer.getOutputSignal();
 
-					fastFourierOutput.fft(sampleBuff);
+					fastFourierFromModifiedSignal.fft(sampleBuff);
 
 					isFFTready = true;
 
