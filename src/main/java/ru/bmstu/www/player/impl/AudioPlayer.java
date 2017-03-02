@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -17,8 +19,12 @@ import ru.bmstu.www.filter.coefs.FilterInfo;
 import ru.bmstu.www.input.AudioFileFormat;
 import ru.bmstu.www.input.ReadMusicFile;
 import ru.bmstu.www.player.IAudioPlayer;
+import ru.bmstu.www.util.EqualizerMessages;
 
 public class AudioPlayer extends Observable implements IAudioPlayer {
+
+	private static Logger log = Logger.getLogger(AudioPlayer.class.getName());
+	private static String TAG = AudioPlayer.class.getName() + ": ";
 
 	private Equalizer equalizer;
 
@@ -37,9 +43,12 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		Equalizer.EqualizerBuilder equalizerBuilder = new Equalizer.EqualizerBuilder();
 		equalizer = equalizerBuilder.countOfBands(FilterInfo.CoefsOfBands.length).lenghtOfInputSignal(BUFF_SIZE / 2)
 				.build();
+		this.addObserver(equalizer);
 
 		this.fastFourierFromUnmodifiedSignal = new FFT();
 		this.fastFourierFromModifiedSignal = new FFT();
+
+		log.log(Level.INFO, TAG + "AudioPlayer created");
 	}
 
 	public boolean isPause() {
@@ -64,7 +73,10 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	@Override
 	public void setMusicFile(File musicFile) {
+		setChanged();
+		notifyObservers(EqualizerMessages.UPD_GAIN);
 		player.setMusicFile(musicFile);
+		log.log(Level.INFO, TAG + "setMusicFile");
 	}
 
 	@Override

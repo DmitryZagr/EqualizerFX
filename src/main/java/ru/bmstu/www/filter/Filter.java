@@ -1,8 +1,11 @@
 package ru.bmstu.www.filter;
 
+import java.util.Observable;
 import java.util.concurrent.Callable;
 
-public class Filter implements Callable<double[]> {
+import ru.bmstu.www.util.EqualizerMessages;
+
+public class Filter extends Observable implements Callable<double[]> {
 
 	protected double[] coefsFilter;
 	protected short[] inputSignal;
@@ -11,6 +14,7 @@ public class Filter implements Callable<double[]> {
 	protected short[] buff;
 	protected final static double dB = 1.259;
 	protected final int FILTER_ID;
+	protected double maxSample = 0;
 
 	public static class FilterBuilder {
 		private double[] coefsFilter;
@@ -84,6 +88,8 @@ public class Filter implements Callable<double[]> {
 
 	public void setGain(float d) {
 		this.gain = d;
+		setChanged();
+		notifyObservers(EqualizerMessages.UPD_GAIN);
 	}
 
 	public double[] getOutputSignal() {
@@ -94,6 +100,10 @@ public class Filter implements Callable<double[]> {
 	public double[] call() throws Exception {
 		this.convolution();
 		return this.outputSignal;
+	}
+	
+	public final double getMaxSample() {
+		return this.maxSample;
 	}
 
 }

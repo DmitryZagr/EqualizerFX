@@ -34,4 +34,5 @@ public class EqualizerUtil {
 
 		return serialNumber;
 	}
+	
 }
