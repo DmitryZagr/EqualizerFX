@@ -82,13 +82,23 @@ public class UserInterfaceController implements Initializable {
 	 * @param url
 	 * @param rb
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 
 		this.initializeEqualizerElements();
+		
 		this.initializeEffectElements();
+		
+		this.initializeGraph();
 
+		this.volumeFromSlider();
+
+		initializeAudioPlayer();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void initializeGraph() {
+		
 		XYChart.Series<Integer, Number> series1 = new XYChart.Series<>();
 		XYChart.Series<Integer, Number> series2 = new XYChart.Series<>();
 		series1.setName("Модифицированный");
@@ -120,10 +130,6 @@ public class UserInterfaceController implements Initializable {
 		this.yAxis.setUpperBound(100);
 		this.yAxis.setLowerBound(-10);
 		this.yAxis.setAnimated(false);
-
-		this.volumeFromSlider();
-
-		initializeAudioPlayer();
 	}
 
 	private void initializeAudioPlayer() {
