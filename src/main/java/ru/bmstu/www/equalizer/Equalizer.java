@@ -70,7 +70,7 @@ public class Equalizer {
 		Filter.FilterBuilder filterBuilder = new Filter.FilterBuilder();
 
 		for (int i = 0; i < filters.length; i++) {
-			this.filters[i] = filterBuilder.id(i).gain(1.0).coefsFilter(FilterInfo.CoefsOfBands[i])
+			this.filters[i] = filterBuilder.id(i).gain(0.0).coefsFilter(FilterInfo.CoefsOfBands[i])
 					.lenghtOfInputSignal(this.lenghtOfInputSignal).build();
 		}
 

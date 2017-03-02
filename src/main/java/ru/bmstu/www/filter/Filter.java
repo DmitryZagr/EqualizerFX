@@ -17,7 +17,7 @@ public class Filter implements Callable<double[]> {
 		private double[] outputSignal;
 		private double gain;
 		private short[] buff;
-		private int id;
+		private int id = this.hashCode();
 
 		public FilterBuilder coefsFilter(double[] coefsFilter) {
 			this.coefsFilter = coefsFilter;
