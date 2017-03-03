@@ -46,6 +46,5 @@ public final class Overdrive extends Effect {
 
 	@Override
 	public void reset() {
-		this.coef = 0.5;
 	}
 }
