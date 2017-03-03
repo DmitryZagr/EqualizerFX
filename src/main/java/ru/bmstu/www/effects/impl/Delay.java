@@ -5,14 +5,16 @@ import java.util.Deque;
 
 import ru.bmstu.www.effect.Effect;
 
-//NOT WORK
 public final class Delay extends Effect {
 
-	private int delay = 10000;
+	private final int DEFAULT = 20000;
+	private int delay = DEFAULT;
 	private Deque<Double> dequeSamples = new ArrayDeque<>(delay);
+	private double currentSample;
 
 	@Override
 	public void pushSample(double sample) {
+		currentSample = sample;
 		if (delay >= this.dequeSamples.size())
 			this.dequeSamples.addLast(sample);
 		else {
@@ -31,15 +33,16 @@ public final class Delay extends Effect {
 	}
 
 	private double createEffect() {
-		if (this.delay <= this.dequeSamples.size())
-			return this.dequeSamples.getFirst() + (this.dequeSamples.pop() * this.coef);
-		return 0.0;
+		if (this.delay == this.dequeSamples.size() && this.dequeSamples.size() != 0) {
+			return (this.dequeSamples.getLast() + (this.dequeSamples.pop() * 0.7)) * 0.8;
+		}
+		return currentSample;
 	}
 
 	@Override
 	public void setCoef(double coef) {
-		this.coef = coef;
-		this.delay *= this.coef;
+		this.delay = DEFAULT;
+		this.delay *= coef;
 	}
 
 }

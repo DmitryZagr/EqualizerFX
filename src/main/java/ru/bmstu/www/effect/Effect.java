@@ -4,17 +4,6 @@ public abstract class Effect {
 
 	protected boolean isActive;
 	protected double coef;
-	// protected short[] inputAudioStream;
-
-	// public abstract short[] createEffect();
-
-	// public short[] getOutputAudioStream() {
-	// return this.inputAudioStream;
-	// }
-	//
-	// public void setInputSampleStream(short[] inputAudioStream) {
-	// this.inputAudioStream = inputAudioStream;
-	// }
 
 	public void setCoef(double coef) {
 		this.coef = coef;
