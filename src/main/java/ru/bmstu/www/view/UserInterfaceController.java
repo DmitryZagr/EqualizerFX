@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Observable;
 import java.util.Observer;
@@ -76,7 +77,7 @@ public class UserInterfaceController implements Initializable {
 	private String delay = "Delay";
 
 	private boolean draw = false;
-	
+
 	private static Logger log = Logger.getLogger(UserInterfaceController.class.getName());
 	private static String TAG = UserInterfaceController.class.getName() + ": ";
 
@@ -89,20 +90,26 @@ public class UserInterfaceController implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 
+		log.log(Level.INFO, TAG + "Start  initialize UI");
+
 		this.initializeEqualizerElements();
-		
+
 		this.initializeEffectElements();
-		
+
 		this.initializeGraph();
 
 		this.volumeFromSlider();
 
 		initializeAudioPlayer();
+
+		log.log(Level.INFO, TAG + "Finish  initialize UI");
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void initializeGraph() {
-		
+
+		log.log(Level.INFO, TAG + "Start graph initialize");
+
 		XYChart.Series<Integer, Number> series1 = new XYChart.Series<>();
 		XYChart.Series<Integer, Number> series2 = new XYChart.Series<>();
 		series1.setName("Модифицированный");
@@ -134,6 +141,8 @@ public class UserInterfaceController implements Initializable {
 		this.yAxis.setUpperBound(130);
 		this.yAxis.setLowerBound(-20);
 		this.yAxis.setAnimated(false);
+
+		log.log(Level.INFO, TAG + "Finish graph initialize");
 	}
 
 	private void initializeAudioPlayer() {
@@ -150,6 +159,8 @@ public class UserInterfaceController implements Initializable {
 		fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Audio Files", "*.wav"));
 		File selectedFile = fileChooser.showOpenDialog(new Stage());
 
+		log.log(Level.INFO, TAG + "Open file " + selectedFile);
+
 		if (selectedFile == null)
 			return;
 
@@ -165,11 +176,15 @@ public class UserInterfaceController implements Initializable {
 				this.audioPlayer.pause();
 			else
 				this.audioPlayer.resume();
+			log.log(Level.INFO, TAG + "Music pause status " + this.audioPlayer.isPause());
 		}
 	}
 
 	@FXML
 	private void clickReset() {
+
+		log.log(Level.INFO, TAG + "Clicked Reset");
+
 		if (this.audioPlayer == null)
 			return;
 
@@ -190,6 +205,8 @@ public class UserInterfaceController implements Initializable {
 	}
 
 	private void initializeEqualizerElements() {
+
+		log.log(Level.INFO, TAG + "Start  initialize Equalizer Elements");
 
 		this.equalizerSliderToLabel.put(Slider_0, labelForSlider_0);
 		this.equalizerSliderToLabel.put(Slider_1, labelForSlider_1);
@@ -216,9 +233,13 @@ public class UserInterfaceController implements Initializable {
 				}
 			});
 		}
+
+		log.log(Level.INFO, TAG + "Finish  initialize Equalizer Elements");
 	}
 
 	private void initializeEffectElements() {
+
+		log.log(Level.INFO, TAG + "Start  initialize Effect Elements");
 
 		overdriveSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -234,25 +255,31 @@ public class UserInterfaceController implements Initializable {
 				audioPlayer.getEqualizer().getEffect(delay).setCoef(newValue.doubleValue());
 			}
 		});
+
+		log.log(Level.INFO, TAG + "Finish  initialize Effect Elements");
 	}
 
 	private void volumeFromSlider() {
 		soundSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				audioPlayer.getEqualizer().setVolume(newValue.doubleValue());
+				if (audioPlayer != null) {
+					audioPlayer.getEqualizer().setVolume(newValue.doubleValue());
+				}
 			}
 		});
 	}
 
 	@FXML
 	private void createDelay() {
+		log.log(Level.INFO, TAG + "Delay effect status " + this.delayCheck.isSelected());
 		if (this.audioPlayer != null)
 			this.audioPlayer.getEqualizer().getEffect(delay).setStatus(this.delayCheck.isSelected());
 	}
 
 	@FXML
 	private void createOverdrive() {
+		log.log(Level.INFO, TAG + "Overdrive effect status " + this.overdriveCheck.isSelected());
 		if (this.audioPlayer != null) {
 			this.audioPlayer.getEqualizer().getEffect(overdrive).setStatus(this.overdriveCheck.isSelected());
 		}
@@ -265,11 +292,14 @@ public class UserInterfaceController implements Initializable {
 			this.audioPlayer.stop();
 		}
 
+		log.log(Level.INFO, TAG + "APP closed");
+
 		System.exit(0);
 	}
 
 	@FXML
 	private void createGraph() {
+		log.log(Level.INFO, TAG + "Graph status " + this.graphCheck.isSelected());
 		this.graphFlag = this.graphCheck.isSelected();
 	}
 
@@ -285,7 +315,8 @@ public class UserInterfaceController implements Initializable {
 				System.arraycopy(audioPlayer.getFTvlOutput(), 0, modify, 0, countOfPointsOnPlot);
 				System.arraycopy(audioPlayer.getFTvlInput(), 0, notModify, 0, countOfPointsOnPlot);
 				for (int i = 0; i < countOfPointsOnPlot; i++) {
-					series1Data[i].setYValue(20 * Math.log10(modify[i] /*/ 0.05*/));
+					series1Data[i]
+							.setYValue(20 * Math.log10(modify[i] /* / 0.05 */));
 					series2Data[i].setYValue(20 * Math.log10(notModify[i]));
 				}
 				draw = false;
