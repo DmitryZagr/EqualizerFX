@@ -67,7 +67,7 @@ public class UserInterfaceController implements Initializable {
 
 	private AudioPlayer audioPlayer;
 
-	private int countOfPointsOnPlot = 128;
+	private int countOfPointsOnPlot = EqualizerUtil.FFT_SAMPLES / 2;
 
 	private GraphListener graphListener = new GraphListener();
 
@@ -315,8 +315,7 @@ public class UserInterfaceController implements Initializable {
 				System.arraycopy(audioPlayer.getFTvlOutput(), 0, modify, 0, countOfPointsOnPlot);
 				System.arraycopy(audioPlayer.getFTvlInput(), 0, notModify, 0, countOfPointsOnPlot);
 				for (int i = 0; i < countOfPointsOnPlot; i++) {
-					series1Data[i]
-							.setYValue(20 * Math.log10(modify[i] /* / 0.05 */));
+					series1Data[i].setYValue(20 * Math.log10(modify[i]));
 					series2Data[i].setYValue(20 * Math.log10(notModify[i]));
 				}
 				draw = false;

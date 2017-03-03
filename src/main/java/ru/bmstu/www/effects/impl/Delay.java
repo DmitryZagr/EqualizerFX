@@ -7,7 +7,7 @@ import ru.bmstu.www.effect.Effect;
 
 public final class Delay extends Effect {
 
-	private final int DEFAULT = 20000;
+	private final int DEFAULT = 25000;
 	private int delay = DEFAULT;
 	private Deque<Double> dequeSamples = new ArrayDeque<>(delay);
 	private double currentSample;
@@ -15,6 +15,10 @@ public final class Delay extends Effect {
 	@Override
 	public void pushSample(double sample) {
 		currentSample = sample;
+		if(!isActive) {
+			dequeSamples.clear();
+			return;
+		}
 		if (delay >= this.dequeSamples.size())
 			this.dequeSamples.addLast(sample);
 		else {
@@ -34,7 +38,7 @@ public final class Delay extends Effect {
 
 	private double createEffect() {
 		if (this.delay == this.dequeSamples.size() && this.dequeSamples.size() != 0) {
-			return (this.dequeSamples.getLast() + (this.dequeSamples.pop() * 0.7)) * 0.8;
+			return (this.dequeSamples.getLast() + (this.dequeSamples.pop() * 0.8));
 		}
 		return currentSample;
 	}
@@ -43,6 +47,11 @@ public final class Delay extends Effect {
 	public void setCoef(double coef) {
 		this.delay = DEFAULT;
 		this.delay *= coef;
+	}
+
+	@Override
+	public void reset() {
+		this.dequeSamples.clear();
 	}
 
 }

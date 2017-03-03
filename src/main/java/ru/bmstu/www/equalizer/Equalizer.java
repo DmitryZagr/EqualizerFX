@@ -24,7 +24,6 @@ public class Equalizer implements Observer {
 	private final int lenghtOfInputSignal;
 	private ExecutorService pool;
 	private Future<double[]>[] futureTasks;
-	private static final double NORMALIZE = 0.05;
 	private double volume = 0.5;
 	private Map<String, Effect> effects = new HashMap<>();
 	private double[] memory;
@@ -55,13 +54,12 @@ public class Equalizer implements Observer {
 	}
 
 	public Equalizer unbindEffect(String effectName) {
-		this.effects.remove(effectName);
+		this.effects.get(effectName).deleteObserver(this);
 		return this;
 	}
 
 	public Equalizer setInputSignal(short[] inputSignal) {
 		this.inputSignal = inputSignal;
-		// this.outputSignal = new short[inputSignal.length];
 		for (Filter filter : this.filters)
 			filter.setInputSignal(this.inputSignal);
 		return this;
@@ -91,11 +89,8 @@ public class Equalizer implements Observer {
 		double sum = 0.0;
 
 		for (int i = 0; i < this.outputSignal.length; i++) {
-			// this.outputSignal[i] = 0;
 			for (Future<double[]> task : futureTasks) {
 				sum += task.get()[i];
-				// sum *= NORMALIZE * this.getVolume();
-				// this.outputSignal[i] += sum; //??????
 			}
 
 			findMaxAndMinCoef(sum);
@@ -105,17 +100,19 @@ public class Equalizer implements Observer {
 			sum = 0.0;
 		}
 
-		normalize();
 		effects();
+		normalize();
 	}
 
 	private void effects() {
-		for (int i = 0; i < this.outputSignal.length; i++) {
+		for (int i = 0; i < this.memory.length; i++) {
 			final int index = i;
 			effects.forEach((k, e) -> {
 				if (e.isActive()) {
-					e.pushSample(this.outputSignal[index]);
-					this.outputSignal[index] = (short) e.popSample();
+					e.pushSample(this.memory[index]);
+					this.memory[index] =  e.popSample();
+				} else {
+					e.reset();
 				}
 			});
 
@@ -163,6 +160,7 @@ public class Equalizer implements Observer {
 	}
 
 	public void setVolume(double volume) {
+		update(null, EqualizerMessages.UPD_GAIN);
 		this.volume = volume;
 	}
 
@@ -175,6 +173,7 @@ public class Equalizer implements Observer {
 			e.setStatus(false);
 		});
 		this.volume = 0.5;
+		update(null, EqualizerMessages.UPD_GAIN);
 	}
 
 	public static class EqualizerBuilder {
@@ -218,7 +217,7 @@ public class Equalizer implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		if(arg != null && ((String)arg).equals(EqualizerMessages.UPD_GAIN))
-			this.maxSampleByModulo = 0.0;
+			this.maxSampleByModulo = 0;
 	}
 
 }

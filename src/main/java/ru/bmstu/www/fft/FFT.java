@@ -1,11 +1,13 @@
 package ru.bmstu.www.fft;
 
+import ru.bmstu.www.util.EqualizerUtil;
+
 //https://ru.wikibooks.org/wiki/Реализации_алгоритмов/Быстрое_преобразование_Фурье
 public class FFT {
 	private final double TwoPi = 6.283185307179586;
 	private double[] AVal;
 	// должно быть равно количеству точек на графике / 2.
-	private int Nvl = 256;
+	private int Nvl = EqualizerUtil.FFT_SAMPLES;
 	private int Nft = Nvl;
 	private double[] FTvl = new double[this.Nft];
 

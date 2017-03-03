@@ -5,6 +5,8 @@ import java.util.Scanner;
 import ru.bmstu.www.exception.EqualizerExceptions;
 
 public class EqualizerUtil {
+	
+	public static final int FFT_SAMPLES = 256;
 
 	public static int getSerialNumber(String stringWithSerialNumber) throws EqualizerExceptions.IncorrectArgumet {
 

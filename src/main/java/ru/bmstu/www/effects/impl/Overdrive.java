@@ -6,8 +6,8 @@ public final class Overdrive extends Effect {
 
 	private short maxAmplitude;
 	private short minAmplitude;
-	private static final short standartMax = 2000;
-	private static final short standartMin = -2000;
+	private static final short standartMax = 3000;
+	private static final short standartMin = -3000;
 	private double currentSample;
 
 	public Overdrive() {
@@ -42,5 +42,10 @@ public final class Overdrive extends Effect {
 	@Override
 	public double popSample() {
 		return this.currentSample;
+	}
+
+	@Override
+	public void reset() {
+		this.coef = 0.5;
 	}
 }
