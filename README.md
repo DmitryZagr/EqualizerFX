@@ -37,6 +37,7 @@ $ java -jar target/jfx/app/EqualizerFX-1.0-SNAPSHOT-jfx.jar
 ```
 
 ### References
+---
    - Java FX [tutorials](http://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm).
    - Maven [tutorial](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html).
    - Editor for creating [README.md](http://dillinger.io).
