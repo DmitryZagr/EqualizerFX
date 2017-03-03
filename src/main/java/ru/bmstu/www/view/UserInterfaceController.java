@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -75,6 +76,9 @@ public class UserInterfaceController implements Initializable {
 	private String delay = "Delay";
 
 	private boolean draw = false;
+	
+	private static Logger log = Logger.getLogger(UserInterfaceController.class.getName());
+	private static String TAG = UserInterfaceController.class.getName() + ": ";
 
 	/**
 	 * Initializes the controller class.
@@ -127,8 +131,8 @@ public class UserInterfaceController implements Initializable {
 		this.graph.setCache(true);
 
 		yAxis.setAutoRanging(false);
-		this.yAxis.setUpperBound(100);
-		this.yAxis.setLowerBound(-10);
+		this.yAxis.setUpperBound(130);
+		this.yAxis.setLowerBound(-20);
 		this.yAxis.setAnimated(false);
 	}
 

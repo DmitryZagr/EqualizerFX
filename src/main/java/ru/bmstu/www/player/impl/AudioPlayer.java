@@ -76,7 +76,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 		setChanged();
 		notifyObservers(EqualizerMessages.UPD_GAIN);
 		player.setMusicFile(musicFile);
-		log.log(Level.INFO, TAG + "setMusicFile");
+		log.log(Level.INFO, TAG + "setMusicFile " + musicFile.getAbsolutePath());
 	}
 
 	@Override
@@ -133,14 +133,13 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 					sampleBuff = byteArrayToSamplesArray();
 
 					isFFTready = false;
-					fastFourierFromUnmodifiedSignal.fft(sampleBuff);
+					fastFourierFromUnmodifiedSignal.fft(toDoubleARR(sampleBuff));
 
 					equalizer.setInputSignal(sampleBuff);
 					equalizer.equalization();
 					sampleBuff = equalizer.getOutputSignal();
 
-					fastFourierFromModifiedSignal.fft(sampleBuff);
-
+					fastFourierFromModifiedSignal.fft(equalizer.getNotNormalizedSignal());
 					isFFTready = true;
 
 					setChanged();
@@ -161,6 +160,14 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 			playThread = null;
 
+		}
+		
+		private double[] toDoubleARR(short [] src) {
+			double[] newArr = new double[src.length];
+			for(int i =0 ; i < src.length; i++) {
+				newArr[i] = src[i];
+			}
+			return newArr;
 		}
 
 		public void pause() {

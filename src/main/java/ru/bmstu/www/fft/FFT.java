@@ -3,13 +3,13 @@ package ru.bmstu.www.fft;
 //https://ru.wikibooks.org/wiki/Реализации_алгоритмов/Быстрое_преобразование_Фурье
 public class FFT {
 	private final double TwoPi = 6.283185307179586;
-	private short[] AVal;
+	private double[] AVal;
 	// должно быть равно количеству точек на графике / 2.
 	private int Nvl = 256;
 	private int Nft = Nvl;
 	private double[] FTvl = new double[this.Nft];
 
-	public void fft(final short[] inputSignal) {
+	public void fft(final double[] inputSignal) {
 
 		this.AVal = inputSignal;
 

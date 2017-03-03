@@ -151,6 +151,10 @@ public class Equalizer implements Observer {
 	public short[] getOutputSignal() {
 		return this.outputSignal;
 	}
+	
+	public double[] getNotNormalizedSignal() {
+		return this.memory;
+	}
 
 	public void close() {
 		if (this.pool != null) {
