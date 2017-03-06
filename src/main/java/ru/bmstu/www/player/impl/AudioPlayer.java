@@ -32,7 +32,7 @@ public class AudioPlayer extends Observable implements IAudioPlayer {
 
 	private Thread playThread;
 
-	private final int BUFF_SIZE = 512;
+	private final int BUFF_SIZE = 512; 
 
 	private FFT fastFourierFromUnmodifiedSignal;
 	private FFT fastFourierFromModifiedSignal;

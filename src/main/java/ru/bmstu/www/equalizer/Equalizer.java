@@ -54,7 +54,7 @@ public class Equalizer implements Observer {
 	}
 
 	public Equalizer unbindEffect(String effectName) {
-		this.effects.get(effectName).deleteObserver(this);
+		this.effects.remove(effectName);
 		return this;
 	}
 
